@@ -6,5 +6,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'PMTHEODOIVB';
+  title = 'Phần mềm theo dõi văn bản';
+  thongbao = 'Thông báo test';
+  test:Test ={
+    id: 1,
+    name: 'Quy Ken'
+  };
+}
+
+export class Test {
+  id: number;
+  name: string;
 }
