@@ -1,1 +1,65 @@
-<p>thong-ke works!</p>
+<div class="row mx-auto">
+    <div class="col-12 mt-3">
+        <!-- Duyệt văn bản -->
+        <div class="table-responsive" style="min-height: 70vh;">
+            <form>
+                <table class="fixedrows">
+                    <tr>
+                            <td><input type="date" class="form-control" id="NgayBD" name="NgayBD" aria-describedby="NgayBD" required></td>
+                            <td><input type="date" class="form-control" id="NgayKT" name="NgayKT" aria-describedby="NgayKT" required></td>
+                            <td class="pt-2">
+                                <select id="CBThuLy" placeholder="Chọn cán bộ..." required>
+                                    <option value="all">Tất cả</option>
+                                </select>
+                            </td>
+                            <td style="width: 130px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="hoanthanh" value="" id="hoanthanh">
+                                    <label class="form-check-label text-danger" for="hoanthanh">
+                                        Hoàn thành
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-submit btn-success btn-primary-c">
+                                    <i class="loading-icon fa fa-spinner fa-spin d-none"></i>
+                                    <span class="btn-txt">Thống kê</span>
+                                </button>
+                            </td>
+                    </tr>
+                </table>
+            </form>
+            <!-- End Nội dung side bar -->
+            <div class="table-container">
+                <!-- @include('dulieuthongke') -->
+            </div>
+        </div>
+
+        <!-- Modal Cập nhật ý kiến chỉ đạo -->
+        <div class="modal fade" id="ykiencd" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+                <div class="modal-content">
+                    <form id="frYkiencd" action="" method="post">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="addModalLabel">Ý KIẾN CHỈ ĐẠO</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body border border-info rounded m-3" style="max-height: calc(100vh - 250px);overflow-y: auto;">
+                            <input name="DocumentID" id="DocumentID" type="hidden" value="">
+                            <textarea class="form-control w-100" id="YKCD" rows="3" name="YKCD" aria-describedby="YKCD"></textarea>
+                            <div class="table-container2 mt-2">
+                                <!-- Nội dung ý kiến chỉ đạo -->
+                            </div>
+                        </div>
+                        <div class="modal-footer float-left ">
+                            <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Thêm</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"><i class="fa fa-ban" aria-hidden="true"></i> Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End Modal Cập nhật ý kiến chỉ đạo -->
+    </div>
+</div>
