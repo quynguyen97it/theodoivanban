@@ -16,6 +16,7 @@ import { TraCuuVanBanComponent } from './tra-cuu-van-ban/tra-cuu-van-ban.compone
 import { ThongKeComponent } from './thong-ke/thong-ke.component';
 import { VanBanHoanThanhComponent } from './van-ban-hoan-thanh/van-ban-hoan-thanh.component';
 import { XuLyVanBanService } from './Service/xu-ly-van-ban.service';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { XuLyVanBanService } from './Service/xu-ly-van-ban.service';
     XuLyVanBanComponent,
     TraCuuVanBanComponent,
     ThongKeComponent,
-    VanBanHoanThanhComponent
+    VanBanHoanThanhComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
