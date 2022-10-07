@@ -1,0 +1,49 @@
+<div class="container pt-5">
+  <div class="row justify-content-center">
+      <div class="col-md-8">
+          <div class="card">
+              <div class="card-header">Đăng nhập hệ thống</div>
+              <div class="card-body">
+                  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+                      <div class="row mb-3">
+                          <label for="login" class="col-md-4 col-form-label text-md-end">
+                              Tên đăng nhập
+                          </label>
+                          <div class="col-md-6">
+                              <input id="username" type="text" class="form-control" formControlName="username" required autofocus>
+                          </div>
+                      </div>
+
+                      <div class="row mb-3">
+                          <label for="password" class="col-md-4 col-form-label text-md-end">Mật khẩu</label>
+                          <div class="col-md-6">
+                              <input id="password" type="password" class="form-control" formControlName="password" required autocomplete="current-password">
+                          </div>
+                      </div>
+
+                      <div class="row mb-3">
+                          <div class="col-md-6 offset-md-4">
+                              <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" name="remember" id="remember" >
+                                  <label class="form-check-label" for="remember">
+                                      Ghi nhớ
+                                  </label>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="row mb-0">
+                          <div class="d-flex justify-content-center">
+                              <button type="submit" [disabled]="!loginForm.valid" class="btn btn-primary">
+                                  Đăng nhập
+                              </button>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<button (click)="getDataUser()">Get Data User Login</button>
