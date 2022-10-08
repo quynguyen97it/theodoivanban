@@ -3,30 +3,42 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { Users } from '../models/users';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  auth_token = '10112|2dYtdI07bSHDtyj5kXbXHh47d6NX5HyBCjEnXWSM';
+  auth_token = this.getAuthorizationToken();
   serverUrl = 'http://192.168.1.25:8001';
   errorData: {};
+  public redirectUrl: string;
 
-  constructor(private http: HttpClient) { }
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.auth_token}`
+    })
+  }
 
-  redirectUrl: string;
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(username: string, password: string) {
     return this.http.post<any>(`${this.serverUrl}/api/login`, {username: username, password: password})
-    .pipe(map(user => {
-        if (user && user.data.token) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-          this.auth_token = currentUser.data.token;
+    .pipe(
+      map(res => {
+        if (res.data.token) {
+          localStorage.setItem('currentUser', JSON.stringify(res));
+          if (this.redirectUrl) {
+            this.router.navigate([this.redirectUrl]);
+            this.redirectUrl = '';
+          }
+
+        } else {
+          throw new Error('Valid token not returned');
         }
-      }),
-      catchError(this.handleError)
+      })
     );
   }
 
@@ -42,15 +54,13 @@ export class AuthService {
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
       return currentUser.data.token;
     }
+    else{
+      this.router.navigate(['/login']);
+    }
   }
 
   logout() {
     localStorage.removeItem('currentUser');
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    alert(error.error.data.error);
-    return error.error.data.error;
   }
 
   getLoggedInUser(auth_token): Observable<any> {
@@ -61,15 +71,12 @@ export class AuthService {
     return this.http.get(this.serverUrl, { headers: headers })
   }
 
-  getAll(): Observable<Users[]> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.auth_token}`
-    })
-    console.log(this.auth_token);
-    return this.http.get<Users[]>(`${this.serverUrl}/api/user`, { headers: headers })
+  getUserLogin(): Observable<Users[]> {
+    return this.http.get<Users[]>(this.serverUrl+'/api/user', this.httpOptions)
     .pipe(
-      catchError(this.errorHandler)
+      catchError(err => {
+        throw 'error in source. Details: ' + err;
+      })
     )
   }
 
@@ -80,6 +87,8 @@ export class AuthService {
     } else {
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
+
+    const err = new Error(errorMessage);
     return throwError(errorMessage);
  }
 }

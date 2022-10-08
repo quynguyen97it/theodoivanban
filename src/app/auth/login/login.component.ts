@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SubscriptionLike } from 'rxjs';
+import { Subject, throwError } from 'rxjs';
 import { Users } from 'src/app/models/users';
 import { AuthService } from '../auth.service';
 
@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
   loginError: string;
   users: Users[] = [];
   token = '';
-  subscription: SubscriptionLike;
+  private ngUnsubscribe = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -27,6 +27,10 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.authService.redirectUrl;
+    }
+
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -43,23 +47,21 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin():void{
-
     this.submitted = true;
-    this.subscription = this.authService.login(this.username.value, this.password.value).subscribe((data) => {
-        //
+    this.authService.login(this.username.value, this.password.value)
+    .subscribe({
+      next: (response) => {
+        this.router.navigate(['']);
       },
-    );
-  }
-
-  getDataUser():void{
-    this.subscription = this.authService.getAll().subscribe((data: Users[])=>{
-      this.users = data;
-      console.log(this.users);
+      error: (error) => {
+        console.log('Sai tên đăng nhập hoặc mật khẩu!');
+      },
+      complete: () => {}
     })
   }
+
   ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }

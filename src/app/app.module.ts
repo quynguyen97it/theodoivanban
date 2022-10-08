@@ -15,6 +15,7 @@ import { VanBanHoanThanhComponent } from './van-ban-hoan-thanh/van-ban-hoan-than
 import { XuLyVanBanService } from './Service/xu-ly-van-ban.service';
 import { LoginComponent } from './auth/login/login.component';
 import { AuthService } from './auth/auth.service';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { AuthService } from './auth/auth.service';
     TraCuuVanBanComponent,
     ThongKeComponent,
     VanBanHoanThanhComponent,
-    LoginComponent
+    LoginComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

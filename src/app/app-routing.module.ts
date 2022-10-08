@@ -6,16 +6,18 @@ import { TraCuuVanBanComponent } from './tra-cuu-van-ban/tra-cuu-van-ban.compone
 import { VanBanHoanThanhComponent } from './van-ban-hoan-thanh/van-ban-hoan-thanh.component';
 import { XuLyVanBanComponent } from './xu-ly-van-ban/xu-ly-van-ban.component';
 import { LoginComponent } from './auth/login/login.component';
+import { AuthGuard } from './auth/auth.guard';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [
-  {path: '', component: XuLyVanBanComponent},
-  {path: 'xulyvanban', component: XuLyVanBanComponent},
-  {path: 'themykienchidao', component: ThemYKienChiDaoComponent},
-  {path: 'tracuuvanban', component: TraCuuVanBanComponent},
-  {path: 'thongke', component: ThongKeComponent},
-  {path: 'vanbanhoanthanh', component: VanBanHoanThanhComponent},
+  {path: '', component: XuLyVanBanComponent, canActivate: [AuthGuard]},
+  {path: 'xulyvanban', component: XuLyVanBanComponent, canActivate: [AuthGuard]},
+  {path: 'themykienchidao', component: ThemYKienChiDaoComponent, canActivate: [AuthGuard]},
+  {path: 'tracuuvanban', component: TraCuuVanBanComponent, canActivate: [AuthGuard]},
+  {path: 'thongke', component: ThongKeComponent, canActivate: [AuthGuard]},
+  {path: 'vanbanhoanthanh', component: VanBanHoanThanhComponent, canActivate: [AuthGuard]},
   {path: 'login', component: LoginComponent},
-  {path: '**', component: XuLyVanBanComponent},
+  {path: '**', component: NotFoundComponent},
 ];
 
 @NgModule({
