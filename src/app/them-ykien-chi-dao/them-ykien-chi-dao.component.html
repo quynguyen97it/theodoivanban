@@ -1,101 +1,150 @@
 <div class="pt-2 table-responsive">
-  <form action="themTTChiDao" method="POST" enctype="multipart/form-data">
+  <form [formGroup]="themYKCD" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
       <table class="table table-bordered border-white table-primary" style="margin-bottom: 0px !important;">
           <tbody>
               <tr>
                   <th class="border-3" colspan="1"><label for="SoKyHieuVB" class="form-label">Số ký hiệu VB<span class="text-danger">(*)</span></label></th>
                   <td class="border-3" colspan="2">
-                      <input type="text" class="form-control" id="SoKyHieuVB" name="SoKyHieuVB" required aria-describedby="SoKyHieuVB">
+                      <input type="text" formControlName="SoKyHieuVB" class="form-control" id="SoKyHieuVB" required>
                       <p class="text-danger" id="errorIncomingTextNumberNotation"></p>
                   </td>
                   <th class="border-3" colspan="1"><label for="NgayVBDen" class="form-label">Ngày văn bản đến<span class="text-danger">(*)</span></label></th>
-                  <td class="border-3" colspan="2"><input type="date" class="form-control" id="NgayVBDen" required name="NgayVBDen" aria-describedby="NgayVBDen"></td>
+                  <td class="border-3" colspan="2">
+                    <input type="date" class="form-control" id="NgayVBDen" required formControlName="NgayVBDen">
+                  </td>
               </tr>
               <tr>
                   <th class="border-3" colspan="1"><label for="NgayBanHanh" class="form-label">Ngày ban hành VB<span class="text-danger">(*)</span></label></th>
-                  <td class="border-3" colspan="2"><input type="date" class="form-control" id="NgayBanHanh" required name="NgayBanHanh" aria-describedby="NgayBanHanh"></td>
+                  <td class="border-3" colspan="2">
+                    <input type="date" class="form-control" id="NgayBanHanh" required formControlName="NgayBanHanh">
+                  </td>
                   <th class="border-3" colspan="1"><label for="CoQuanBanHanh" class="form-label">Cơ quan ban hành</label></th>
                   <td class="border-3" colspan="2">
-                      <textarea class="form-control" id="CoQuanBanHanh" rows="2" name="CoQuanBanHanh" aria-describedby="CoQuanBanHanh"></textarea>
+                      <textarea class="form-control" id="CoQuanBanHanh" rows="2" formControlName="CoQuanBanHanh"></textarea>
                   </td>
               </tr>
               <tr>
                   <th class="border-3" colspan="1"><label for="TrichYeuVB" class="form-label">Trích yếu VB<span class="text-danger">(*)</span></label></th>
-                  <td class="border-3" colspan="2"><textarea class="form-control" id="TrichYeuVB" rows="2" name="TrichYeuVB" required aria-describedby="TrichYeuVB"></textarea></td>
+                  <td class="border-3" colspan="2">
+                    <textarea class="form-control" id="TrichYeuVB" rows="2" formControlName="TrichYeuVB" required></textarea>
+                  </td>
                   <th class="border-3" colspan="1"><label for="TGHetHan" class="form-label">Thời gian hết hạn</label></th>
-                  <td class="border-3" colspan="2"><input type="date" class="form-control" id="TGHetHan" name="TGHetHan" aria-describedby="TGHetHan"></td>
+                  <td class="border-3" colspan="2">
+                    <input type="date" class="form-control" id="TGHetHan" formControlName="TGHetHan">
+                  </td>
               </tr>
               <tr>
                   <th class="border-3" colspan="1"><label for="TrichYeuVB" class="form-label">Cán bộ thực hiện<span class="text-danger">(*)</span></label></th>
                   <td class="border-3" colspan="2">
-                      <select multiple data-live-search="true" id="tCBThucHien" name="CBThucHien[]" required placeholder="Chọn cán bộ thụ lý...">
-                          <option value=""></option>
-                      </select>
+                      <ng-select [items]="canbothuchien"
+                                bindLabel="FullName"
+                                bindValue="id"
+                                formControlName="CBThucHien"
+                                [multiple]="true"
+                      >
+                      </ng-select>
+                      <!-- <ng-select [formControl]="selectedImplementationOfficer">
+                        <ng-option *ngFor="let cbth of canbothuchien" [value]="cbth.id">{{cbth.FullName}}</ng-option>
+                     </ng-select> -->
                   </td>
                   <th class="border-3" colspan="1"><label for="CoQuanBanHanh" class="form-label">Cán bộ phối hợp</label></th>
                   <td class="border-3" colspan="2">
-                      <select multiple data-live-search="true" name="CBPhoiHop[]" placeholder="Chọn cán bộ phối hợp...">
-                          <option value=""></option>
-                      </select>
+                      <ng-select [items]="canbophoihop"
+                                bindLabel="FullName"
+                                bindValue="id"
+                                formControlName="CBPhoiHop"
+                                [multiple]="false"
+                      >
+                      </ng-select>
                   </td>
               </tr>
               <tr>
                   <th class="border-3" colspan="1"><label for="fileTomtatCD" class="form-label">Hình ảnh tóm tắt YKCĐ</label></th>
                   <td class="border-3" colspan="2">
                       <label class="btn" for="fileTomtatCD">
-                          <input type="file" name="fileTomtatCD" id="fileTomtatCD" class="form-control" accept="image/jpeg, image/png" style="display:none">
+                          <input type="file" (change)="ktFileHinhAnhTomTatYKCD($event)" id="fileTomtatCD" class="form-control" accept="image/jpeg, image/png" style="display:none">
                           <i class="fa fa-paperclip" aria-hidden="true"></i>
                       </label>
                       <span id="fileTomtatCDSelectedName"></span>
                   </td>
                   <th class="border-3" colspan="1"><label for="TTYKienChiDao" class="form-label">Tóm tắt ý kiến chỉ đạo</label></th>
                   <td class="border-3" colspan="2">
-                      <textarea class="form-control" id="TTYKienChiDao" rows="2" name="TTYKienChiDao" aria-describedby="TTYKienChiDao" placeholder="Mỗi ý kiến chỉ đạo cách nhau bởi dấu ;"></textarea>
+                      <textarea class="form-control" id="TTYKienChiDao" rows="2" formControlName="TTYKienChiDao" placeholder="Mỗi ý kiến chỉ đạo cách nhau bởi dấu ;"></textarea>
                   </td>
               </tr>
               <tr>
-                  <th colspan="6" class="text-center"><button id="btnThemVBDen" type="submit" class="btn btn-sm btn-outline-info fw-bold"><i class="fa fa-floppy-o" aria-hidden="true"></i> Thêm mới</button></th>
+                  <th colspan="6" class="text-center">
+                    <button id="btnThemVBDen" [disabled]="!themYKCD.valid" type="submit" class="btn btn-sm btn-outline-info fw-bold">
+                      <i class="fa fa-floppy-o" aria-hidden="true"></i> Thêm mới
+                    </button>
+                  </th>
               </tr>
           </tbody>
       </table>
   </form>
 </div>
 
-<table class="table table-bordered bg-light" style="margin-bottom: 2px !important;">
-  <tr>
-          <td style="text-align: center;">
-              <label class="btn" for="fileDSChiDao">
-                  <input type="file" name="fileDSChiDao" id="fileDSChiDao" class="form-control" required accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
-                  <i class="fa fa-paperclip" aria-hidden="true"></i>
-              </label>
-          </td>
-          <td>
-              <span id="fileDSChiDaoSelectedName"></span>
-          </td>
-          <td>
-              <button class="btn btn-sm btn-outline-info fw-bold"><i class="fa fa-list-alt" aria-hidden="true"></i> Đọc file và lưu dữ liệu</button>
-              <a class="px-3" href="#" target="blank">Mau_VB_Chi_Dao.xlsx</a>
-          </td>
-  </tr>
-  <tr>
-          <td style="text-align: center;">
-              <label class="btn" for="fileHinhAnhQ">
-                  <input type="file" id="fileHinhAnhQ" name="fileHinhAnhQ" class="form-control" required accept="image/*" style="display:none">
-                  <i class="fa fa-paperclip" aria-hidden="true"></i>
-              </label>
-          </td>
-          <td>
-              <span id="imageSelectedName"></span>
-          </td>
-          <td>
-              <button id="btnQuetHinhanh" class="btn btn-sm btn-outline-info fw-bold"><i class="fa fa-picture-o" aria-hidden="true"></i>
-                  <i class="loading-icon fa fa-spinner fa-spin d-none"></i>
-                  <span class="btn-txt"> Quét hình ảnh</span>
-              </button>
-              <a class="px-3" href="" target="blank">Mau_Hinh_Anh.png</a>
-          </td>
-  </tr>
-</table>
+<form [formGroup] = "importFileDSYKCD" (ngSubmit)="importFileDSYKCDF()">
+  <table class="table table-bordered bg-light" style="margin-bottom: 2px !important;">
+    <tr>
+      <td style="text-align: center;">
+        <label class="btn" for="fileDSChiDao">
+        <input type="file" (change)="ktFileDSYKCD($event)" id="fileDSChiDao" class="form-control" required accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
+          <i class="fa fa-paperclip" aria-hidden="true"></i>
+        </label>
+      </td>
+      <td>
+        <span id="fileDSChiDaoSelectedName"></span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-outline-info fw-bold" [disabled]="!importFileDSYKCD.valid" type="submit"><i class="fa fa-list-alt" aria-hidden="true"></i> Đọc file và lưu dữ liệu</button>
+        <a class="px-3" href="#" target="blank">Mau_VB_Chi_Dao.xlsx</a>
+      </td>
+    </tr>
+  </table>
+</form>
 
+<form [formGroup] = "importImageYKCD" (ngSubmit)="importImageDSYKCDF()">
+  <table class="table table-bordered bg-light" style="margin-bottom: 2px !important;">
+    <tr>
+      <td style="text-align: center;">
+        <label class="btn" for="fileHinhAnhQ">
+          <input type="file" id="fileHinhAnhQ" (change)="ktImageDSYKCD($event)" class="form-control" required accept="image/*" style="display:none">
+            <i class="fa fa-paperclip" aria-hidden="true"></i>
+        </label>
+      </td>
+      <td>
+        <span id="imageSelectedName"></span>
+      </td>
+      <td>
+        <button id="btnQuetHinhanh" class="btn btn-sm btn-outline-info fw-bold" [disabled]="!importImageYKCD.valid" type="submit"><i class="fa fa-picture-o" aria-hidden="true"></i>
+          <i class="loading-icon fa fa-spinner fa-spin d-none"></i>
+          <span class="btn-txt"> Quét hình ảnh</span>
+        </button>
+        <a class="px-3" href="" target="blank">Mau_Hinh_Anh.png</a>
+      </td>
+    </tr>
+  </table>
+</form>
 
-<button (click)="getDataUser()">Get Data User Login</button>
+<!-- <mat-form-field appearance="fill">
+  <mat-label>Horizontal position</mat-label>
+  <mat-select [(value)]="horizontalPosition">
+    <mat-option value="start">Start</mat-option>
+    <mat-option value="center">Center</mat-option>
+    <mat-option value="end">End</mat-option>
+    <mat-option value="left">Left</mat-option>
+    <mat-option value="right">Right</mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field appearance="fill">
+  <mat-label>Vertical position</mat-label>
+  <mat-select [(value)]="verticalPosition">
+    <mat-option value="top">Top</mat-option>
+    <mat-option value="bottom">Bottom</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button mat-stroked-button (click)="openSnackBar()" aria-label="Show an example snack-bar">
+  Pool party!
+</button> -->

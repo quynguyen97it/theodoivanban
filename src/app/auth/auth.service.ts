@@ -11,24 +11,24 @@ import { Users } from '../models/users';
 })
 export class AuthService {
   auth_token = this.getAuthorizationToken();
-  serverUrl = 'http://192.168.1.25:8001';
+  apiURL = 'http://192.168.1.25:8001';
   errorData: {};
   public redirectUrl: string;
 
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.auth_token}`
+      'Authorization': 'Bearer ' + this.auth_token
     })
   }
 
   constructor(private http: HttpClient, private router: Router) { }
 
   login(username: string, password: string) {
-    return this.http.post<any>(`${this.serverUrl}/api/login`, {username: username, password: password})
+    return this.http.post<any>(`${this.apiURL}/api/login`, {username: username, password: password})
     .pipe(
       map(res => {
-        if (res.data.token) {
+        if (res.token) {
           localStorage.setItem('currentUser', JSON.stringify(res));
           if (this.redirectUrl) {
             this.router.navigate([this.redirectUrl]);
@@ -52,7 +52,7 @@ export class AuthService {
   getAuthorizationToken() {
     if (localStorage.getItem('currentUser')) {
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      return currentUser.data.token;
+      return currentUser.token;
     }
     else{
       this.router.navigate(['/login']);
@@ -68,11 +68,11 @@ export class AuthService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth_token}`
     })
-    return this.http.get(this.serverUrl, { headers: headers })
+    return this.http.get(this.apiURL, { headers: headers })
   }
 
   getUserLogin(): Observable<Users[]> {
-    return this.http.get<Users[]>(this.serverUrl+'/api/user', this.httpOptions)
+    return this.http.get<Users[]>(this.apiURL+'/api/user', this.httpOptions)
     .pipe(
       catchError(err => {
         throw 'error in source. Details: ' + err;

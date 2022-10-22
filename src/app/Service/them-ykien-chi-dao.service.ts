@@ -12,21 +12,38 @@ import { ProgressFile } from '../models/progress-file';
 import { SummaryList } from '../models/summary-list';
 import { Tag } from '../models/tag';
 import { Users } from '../models/users';
+import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemYKienChiDaoService {
-  private apiURL = 'https://5f0c7a5911b7f60016055e6c.mockapi.io/Api/ahihi';
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  }
-  constructor(private httpClient: HttpClient) { }
 
-  getAll(): Observable<Users[]> {
-    return this.httpClient.get<Users[]>(this.apiURL)
+  constructor(
+    private httpClient: HttpClient,
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+    ) { }
+
+  getImplementationOfficer(): Observable<any[]> {
+    return this.httpClient.get<any[]>(this.authService.apiURL+'/api/canbothuchien',this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  getCoordinationOfficer(): Observable<any[]> {
+    return this.httpClient.get<any[]>(this.authService.apiURL+'/api/canbophoihop',this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  createDocument(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'api/themvanbanchidao', formData,this.authService.httpOptions)
     .pipe(
       catchError(this.errorHandler)
     )
