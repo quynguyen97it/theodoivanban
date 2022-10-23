@@ -1,11 +1,11 @@
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ThemYKienChiDaoService } from '../Service/them-ykien-chi-dao.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../Service/notification.service';
 
 @Component({
   selector: 'app-them-ykien-chi-dao',
@@ -32,7 +32,7 @@ export class ThemYKienChiDaoComponent implements OnInit{
     private router: Router,
     private authService: AuthService,
     private config: NgSelectConfig,
-    private toastr: ToastrService,
+    private notifyService : NotificationService,
     ) {
       this.config.notFoundText = 'Không có kết quả tìm kiếm';
       this.config.appendTo = 'body';
@@ -196,15 +196,67 @@ export class ThemYKienChiDaoComponent implements OnInit{
     this.http
       .post('http://192.168.1.25:8001/api/themdschidao', formData, HttpUploadOptions)
       .subscribe({
-        next: (response) => console.log(response),
-        error: (error) => console.log(error),
+        next: (response) => {
+          this.showToasterSuccess('','Thêm dữ liệu thành công.');
+          console.log(response);
+        },
+        error: (error) => {
+          this.showToasterError('','Thêm dữ liệu thất bại!');
+          console.log(error);
+        },
       });
   }
 
   importImageDSYKCDF(){
-    this.toastr.error('', 'Thêm thành công.', {
-      timeOut: 3000,
-      positionClass: 'toast-bottom-center',
-    });
+    const HttpUploadOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer 20142|K4wwoTVRfkteDIH0mtpXmDOjIgs0lhZunmZmZKxm'
+     })
+    }
+
+    var formData: any = new FormData();
+    formData.append("fileHinhAnhQ", this.importImageYKCD.get('fileHinhAnhQ').value);
+    formData.append('_method', 'POST');;
+
+    this.http
+      .post('http://192.168.1.25:8001/api/quetthemhinhanhchidao', formData, HttpUploadOptions)
+      .subscribe({
+        next: (response) => {
+          var NgayBanHanh0 = response['NgayBanHanh'];
+          var NgayBanHanh1 = NgayBanHanh0.split("/");
+          var NgayBanHanh = NgayBanHanh1[2]+"-"+NgayBanHanh1[1]+"-"+NgayBanHanh1[0];
+          var NgayDen0 = response['NgayDen'];
+          var NgayDen1 = NgayDen0.split("/");
+          var NgayDen = NgayDen1[2]+"-"+NgayDen1[1]+"-"+NgayDen1[0];
+
+          this.showToasterSuccess('','Quét hình ảnh thành công.');
+          this.themYKCD.get('TrichYeuVB').setValue(response['TrichYeu']);
+          this.themYKCD.get('SoKyHieuVB').setValue(response['SoKyHieuVB']);
+          this.themYKCD.get('CoQuanBanHanh').setValue(response['CoQuanBanHanh']);
+          this.themYKCD.get('NgayVBDen').setValue(NgayDen);
+          this.themYKCD.get('NgayBanHanh').setValue(NgayBanHanh);
+          console.log(response);
+        },
+        error: (error) => {
+          this.showToasterError('','Quét hình ảnh thất bại!');
+          console.log(error);
+        },
+      });
+  }
+
+  showToasterSuccess(message, title){
+    this.notifyService.showSuccess(message, title);
+  }
+
+  showToasterError(message, title){
+      this.notifyService.showError(message, title);
+  }
+
+  showToasterInfo(message, title){
+      this.notifyService.showInfo(message, title);
+  }
+
+  showToasterWarning(message, title){
+      this.notifyService.showWarning(message, title);
   }
 }
