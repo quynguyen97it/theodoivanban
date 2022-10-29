@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ThemYKienChiDaoService } from '../Service/them-ykien-chi-dao.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +6,15 @@ import { AuthService } from '../auth/auth.service';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NotificationService } from '../Service/notification.service';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import {SelectionModel} from '@angular/cdk/collections';
+import {MatSort, SortDirection} from '@angular/material/sort';
+import {merge, Observable, of as observableOf} from 'rxjs';
+import {catchError, map, startWith, switchMap} from 'rxjs/operators';
+import { IncomingOfficialDispatch } from '../models/incoming-official-dispatch';
+
+let VanBanChiDao: IncomingOfficialDispatch[] = [];
 
 @Component({
   selector: 'app-them-ykien-chi-dao',
@@ -13,7 +22,40 @@ import { NotificationService } from '../Service/notification.service';
   styleUrls: ['./them-ykien-chi-dao.component.scss']
 })
 
-export class ThemYKienChiDaoComponent implements OnInit{
+export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
+  displayedColumns: string[] = ['select', 'DocumentID', 'IncomingTextNumberNotation', 'ReleaseDate', 'TextExcerpt'];
+  dataSource = new MatTableDataSource<IncomingOfficialDispatch>(VanBanChiDao);
+  selection = new SelectionModel<IncomingOfficialDispatch>(true, []);
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: IncomingOfficialDispatch): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.DocumentID + 1}`;
+  }
+
   canbothuchien: any[] = [];
   canbophoihop: any[] = [];
   cbth: FormControl;
@@ -39,6 +81,12 @@ export class ThemYKienChiDaoComponent implements OnInit{
       this.config.bindValue = 'value';
     }
 
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.paginator._intl.itemsPerPageLabel = 'Số lượng dòng hiển thị: ';
+  }
+
   ngOnInit(): void {
     this.selectedImplementationOfficer.valueChanges.subscribe(value => {
       console.log(value);
@@ -61,6 +109,16 @@ export class ThemYKienChiDaoComponent implements OnInit{
     this.themykienchidaoService.getCoordinationOfficer().subscribe({
       next: (data) => {
         this.canbophoihop = data;
+      },
+      error: (error) => {
+        console.log('Lỗi dữ liệu!');
+      },
+      complete: () => {}
+    });
+
+    this.themykienchidaoService.getUnapprovedTextList().subscribe({
+      next: (data) => {
+        this.dataSource = new MatTableDataSource(data);
       },
       error: (error) => {
         console.log('Lỗi dữ liệu!');
@@ -110,11 +168,11 @@ export class ThemYKienChiDaoComponent implements OnInit{
   }
 
   onSubmit() {
-    const HttpUploadOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer 20142|K4wwoTVRfkteDIH0mtpXmDOjIgs0lhZunmZmZKxm'
-     })
-    }
+    // const HttpUploadOptions = {
+    //   headers: new HttpHeaders({
+    //     'Authorization': 'Bearer 20142|K4wwoTVRfkteDIH0mtpXmDOjIgs0lhZunmZmZKxm'
+    //  })
+    // }
     var CBThucHien = [];
     var CBPhoiHop = [];
     var CBPhoiHoparr = [];
@@ -123,7 +181,7 @@ export class ThemYKienChiDaoComponent implements OnInit{
       CBThucHien = ((this.themYKCD.get('CBThucHien').value).map(i=>Number(i)));
     }
     else{
-      alert('Vui lòng chọn cán bộ thực hiện!');
+      this.showToasterError('','Vui lòng chọn cán bộ thực hiện!');
       return;
     }
 
@@ -147,12 +205,24 @@ export class ThemYKienChiDaoComponent implements OnInit{
     // for (var data of formData.entries()) {
     //   console.log(data[0]+ ', ' + data[1]);
     // }
-    this.http
-      .post('http://192.168.1.25:8001/api/themvanbanchidao', formData, HttpUploadOptions)
-      .subscribe({
-        next: (response) => console.log(response),
-        error: (error) => console.log(error),
-      });
+
+    this.themykienchidaoService.createDocument(formData).subscribe({
+      next: (data) => {
+        this.showToasterSuccess('','Thêm dữ liệu thành công.');
+        console.log(data);
+      },
+      error: (error) => {
+        this.showToasterError('','Thêm dữ liệu thất bại! Lỗi đường truyền hoặc Trùng Số ký hiệu VB!');
+      },
+      complete: () => {}
+    });
+
+    // this.http
+    //   .post('http://192.168.1.25:8001/api/themvanbanchidao', formData, HttpUploadOptions)
+    //   .subscribe({
+    //     next: (response) => console.log(response),
+    //     error: (error) => console.log(error),
+    //   });
 
   }
 
@@ -183,45 +253,28 @@ export class ThemYKienChiDaoComponent implements OnInit{
   }
 
   importFileDSYKCDF(){
-    const HttpUploadOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer 20142|K4wwoTVRfkteDIH0mtpXmDOjIgs0lhZunmZmZKxm'
-     })
-    }
-
     var formData: any = new FormData();
     formData.append("fileDSChiDao", this.importFileDSYKCD.get('fileDSChiDao').value);
     formData.append('_method', 'POST');;
 
-    this.http
-      .post('http://192.168.1.25:8001/api/themdschidao', formData, HttpUploadOptions)
-      .subscribe({
-        next: (response) => {
-          this.showToasterSuccess('','Thêm dữ liệu thành công.');
-          console.log(response);
-        },
-        error: (error) => {
-          this.showToasterError('','Thêm dữ liệu thất bại!');
-          console.log(error);
-        },
-      });
+    this.themykienchidaoService.createDocumentFromFile(formData).subscribe({
+      next: (data) => {
+        this.showToasterSuccess('','Thêm dữ liệu thành công.');
+      },
+      error: (error) => {
+        this.showToasterError('','Thêm dữ liệu thất bại!');
+      },
+      complete: () => {}
+    });
   }
 
   importImageDSYKCDF(){
-    const HttpUploadOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer 20142|K4wwoTVRfkteDIH0mtpXmDOjIgs0lhZunmZmZKxm'
-     })
-    }
-
     var formData: any = new FormData();
     formData.append("fileHinhAnhQ", this.importImageYKCD.get('fileHinhAnhQ').value);
     formData.append('_method', 'POST');;
 
-    this.http
-      .post('http://192.168.1.25:8001/api/quetthemhinhanhchidao', formData, HttpUploadOptions)
-      .subscribe({
-        next: (response) => {
+    this.themykienchidaoService.createDocumentFromImage(formData).subscribe({
+      next: (response) => {
           var NgayBanHanh0 = response['NgayBanHanh'];
           var NgayBanHanh1 = NgayBanHanh0.split("/");
           var NgayBanHanh = NgayBanHanh1[2]+"-"+NgayBanHanh1[1]+"-"+NgayBanHanh1[0];
@@ -236,12 +289,13 @@ export class ThemYKienChiDaoComponent implements OnInit{
           this.themYKCD.get('NgayVBDen').setValue(NgayDen);
           this.themYKCD.get('NgayBanHanh').setValue(NgayBanHanh);
           console.log(response);
-        },
-        error: (error) => {
+      },
+      error: (error) => {
           this.showToasterError('','Quét hình ảnh thất bại!');
           console.log(error);
-        },
-      });
+      },
+      complete: () => {}
+    });
   }
 
   showToasterSuccess(message, title){

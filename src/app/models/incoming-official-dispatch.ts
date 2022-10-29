@@ -1,18 +1,18 @@
 export interface IncomingOfficialDispatch {
-  DocumentID: number;
+  DocumentID: string;
   LevelDispatch: string;
   locality: string;
   IncomingTextNumberNotation: string;
-  ReleaseDate: Date;
+  ReleaseDate: string;
   TextExcerpt: string;
   AgencyIssued: string;
-  DateOfReceiptOfDispatch: Date;
+  DateOfReceiptOfDispatch: string;
   summary: string;
-  ExpirationDate: Date;
-  ExecutionStatus: number;
+  ExpirationDate: string;
+  ExecutionStatus: string;
   CausesSolutions: string;
-  ImplementationDate: Date;
-  CompletionDate: Date;
+  ImplementationDate: string;
+  CompletionDate: string;
   note: string;
   nameF1: string;
   pathF1: string;
@@ -24,5 +24,5 @@ export interface IncomingOfficialDispatch {
   pathF4: string;
   nameF5: string;
   pathF5: string;
-  updated_at: Date;
+  updated_at: string;
 }

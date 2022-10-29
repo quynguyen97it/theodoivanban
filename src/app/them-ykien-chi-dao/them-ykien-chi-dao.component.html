@@ -98,7 +98,7 @@
       </td>
       <td>
         <button class="btn btn-sm btn-outline-info fw-bold" [disabled]="!importFileDSYKCD.valid" type="submit"><i class="fa fa-list-alt" aria-hidden="true"></i> Đọc file và lưu dữ liệu</button>
-        <a class="px-3" href="#" target="blank">Mau_VB_Chi_Dao.xlsx</a>
+        <a class="px-3" href="http://192.168.1.25:8001/storage/Mau_VB_Chi_Dao.xlsx" target="blank">Mau_VB_Chi_Dao.xlsx</a>
       </td>
     </tr>
   </table>
@@ -121,7 +121,7 @@
           <i class="loading-icon fa fa-spinner fa-spin d-none"></i>
           <span class="btn-txt"> Quét hình ảnh</span>
         </button>
-        <a class="px-3" href="" target="blank">Mau_Hinh_Anh.png</a>
+        <a class="px-3" href="http://192.168.1.25:8001/storage/Mau_Hinh_Anh.png" target="blank">Mau_Hinh_Anh.png</a>
       </td>
     </tr>
   </table>
@@ -148,3 +148,70 @@
 <button mat-stroked-button (click)="openSnackBar()" aria-label="Show an example snack-bar">
   Pool party!
 </button> -->
+
+<div class="mat-elevation-z8">
+  <mat-form-field appearance="standard">
+    <mat-label>Tìm kiếm</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Nhập nội dung cần tìm..." #input>
+  </mat-form-field>
+  <table mat-table [dataSource]="dataSource">
+
+    <!-- Checkbox Column -->
+  <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                    [aria-label]="checkboxLabel()">
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox (click)="$event.stopPropagation()"
+                    (change)="$event ? selection.toggle(row) : null"
+                    [checked]="selection.isSelected(row)"
+                    [aria-label]="checkboxLabel(row)">
+      </mat-checkbox>
+    </td>
+  </ng-container>
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="DocumentID">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef> # </th>
+      <td [ngClass]="['tableContent']" mat-cell *matCellDef="let element; let i = index;"> {{i+1}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="IncomingTextNumberNotation">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef> Số, ký hiệu của VB </th>
+      <td mat-cell [ngClass]="['contentIncomingTextNumberNotation', 'tableContent']" *matCellDef="let element"> {{element.IncomingTextNumberNotation}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="ReleaseDate">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef> Ngày ban hành </th>
+      <td [ngClass]="['tableContent']" mat-cell *matCellDef="let element"> {{element.ReleaseDate| date: 'dd/MM/yyyy'}} </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="TextExcerpt">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>  </th>
+      <td mat-cell [ngClass]="['contentTextExcerpt', 'tableContent']" *matCellDef="let element"> {{element.TextExcerpt}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+      [class.selected]="row.selected"
+      (click)="row.selected= !row.selected"
+      (click)="selection.toggle(row)">
+  </tr>
+    <!-- Row shown when there is no matching data. -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">Không tìm thấy dữ liệu lọc {{input.value}}</td>
+    </tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                 showFirstLastButtons>
+  </mat-paginator>
+</div>
+

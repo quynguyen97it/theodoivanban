@@ -11,13 +11,13 @@ import { Users } from '../models/users';
 })
 export class AuthService {
   auth_token = this.getAuthorizationToken();
-  apiURL = 'http://192.168.1.25:8001';
+  apiURL = 'http://localhost:8001';
   errorData: {};
   public redirectUrl: string;
 
   httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.auth_token
     })
   }

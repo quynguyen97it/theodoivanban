@@ -43,7 +43,28 @@ export class ThemYKienChiDaoService {
   }
 
   createDocument(formData): Observable<any[]> {
-    return this.httpClient.post<any[]>(this.authService.apiURL+'api/themvanbanchidao', formData,this.authService.httpOptions)
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/themvanbanchidao', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  createDocumentFromFile(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/themdschidao', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  createDocumentFromImage(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/quetthemhinhanhchidao', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  getUnapprovedTextList(): Observable<any[]> {
+    return this.httpClient.get<any[]>(this.authService.apiURL+'/api/danhsachvanbanchuaduyet',this.authService.httpOptions)
     .pipe(
       catchError(this.errorHandler)
     )
