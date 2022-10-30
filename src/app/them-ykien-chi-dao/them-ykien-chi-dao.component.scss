@@ -20,22 +20,29 @@ table {
   font-weight: bold!important;
 }
 
-// .mat-sort-header-container{
-//   justify-content: center!important;
-// }
-
-// .mat-header-cell {
-//   text-align: center !important;
-// }
-
 .tableContent{
   padding: 0 30px 0 30px!important;
 }
 
 .contentIncomingTextNumberNotation{
-  width: 200px!important;
+  width: 400px!important;
 }
 
 .contentTextExcerpt{
   width: 800px!important;
 }
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+

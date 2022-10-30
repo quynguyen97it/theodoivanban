@@ -14,8 +14,6 @@ import {merge, Observable, of as observableOf} from 'rxjs';
 import {catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { IncomingOfficialDispatch } from '../models/incoming-official-dispatch';
 
-let VanBanChiDao: IncomingOfficialDispatch[] = [];
-
 @Component({
   selector: 'app-them-ykien-chi-dao',
   templateUrl: './them-ykien-chi-dao.component.html',
@@ -23,8 +21,10 @@ let VanBanChiDao: IncomingOfficialDispatch[] = [];
 })
 
 export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
-  displayedColumns: string[] = ['select', 'DocumentID', 'IncomingTextNumberNotation', 'ReleaseDate', 'TextExcerpt'];
-  dataSource = new MatTableDataSource<IncomingOfficialDispatch>(VanBanChiDao);
+  isLoadingResults = true;
+  VanBanChiDao: IncomingOfficialDispatch[] = [];
+  displayedColumns: string[] = ['select', 'IncomingTextNumberNotation', 'ReleaseDate', 'TextExcerpt'];
+  dataSource = new MatTableDataSource<IncomingOfficialDispatch>(this.VanBanChiDao);
   selection = new SelectionModel<IncomingOfficialDispatch>(true, []);
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -85,6 +85,15 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.paginator._intl.itemsPerPageLabel = 'Số lượng dòng hiển thị: ';
+    this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+      if (length === 0 || pageSize === 0) {
+        return `0 Trên tổng ${length }`;
+      }
+      length = Math.max(length, 0);
+      const startIndex = page * pageSize;
+      const endIndex = startIndex < length ? Math.min(startIndex + pageSize, length) : startIndex + pageSize;
+      return `${startIndex + 1} - ${endIndex} Trên tổng ${length}`;
+    };
   }
 
   ngOnInit(): void {
@@ -118,7 +127,9 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
 
     this.themykienchidaoService.getUnapprovedTextList().subscribe({
       next: (data) => {
-        this.dataSource = new MatTableDataSource(data);
+        this.dataSource = new MatTableDataSource<IncomingOfficialDispatch>(data);
+        this.dataSource.paginator = this.paginator;
+        this.isLoadingResults = false;
       },
       error: (error) => {
         console.log('Lỗi dữ liệu!');
