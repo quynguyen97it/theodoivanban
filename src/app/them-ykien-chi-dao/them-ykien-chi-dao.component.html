@@ -43,9 +43,6 @@
                                 [multiple]="true"
                       >
                       </ng-select>
-                      <!-- <ng-select [formControl]="selectedImplementationOfficer">
-                        <ng-option *ngFor="let cbth of canbothuchien" [value]="cbth.id">{{cbth.FullName}}</ng-option>
-                     </ng-select> -->
                   </td>
                   <th class="border-3" colspan="1"><label for="CoQuanBanHanh" class="form-label">Cán bộ phối hợp</label></th>
                   <td class="border-3" colspan="2">
@@ -176,7 +173,9 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"
       [class.selected]="row.selected"
       (click)="row.selected= !row.selected"
-      (click)="selection.toggle(row)">
+      (click)="selection.toggle(row)"
+      (click)="chonYKCD(row)"
+      >
   </tr>
 
     <tr class="mat-row" *matNoDataRow>
@@ -188,4 +187,3 @@
                  showFirstLastButtons>
   </mat-paginator>
 </div>
-

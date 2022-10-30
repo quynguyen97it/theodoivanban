@@ -13,6 +13,8 @@ import {MatSort, SortDirection} from '@angular/material/sort';
 import {merge, Observable, of as observableOf} from 'rxjs';
 import {catchError, map, startWith, switchMap} from 'rxjs/operators';
 import { IncomingOfficialDispatch } from '../models/incoming-official-dispatch';
+import {MatDialog} from '@angular/material/dialog';
+import { ThemYKienChiDaoDialogComponent } from '../them-ykien-chi-dao-dialog/them-ykien-chi-dao-dialog.component';
 
 @Component({
   selector: 'app-them-ykien-chi-dao',
@@ -21,41 +23,21 @@ import { IncomingOfficialDispatch } from '../models/incoming-official-dispatch';
 })
 
 export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
-  isLoadingResults = true;
-  VanBanChiDao: IncomingOfficialDispatch[] = [];
-  displayedColumns: string[] = ['select', 'IncomingTextNumberNotation', 'ReleaseDate', 'TextExcerpt'];
-  dataSource = new MatTableDataSource<IncomingOfficialDispatch>(this.VanBanChiDao);
-  selection = new SelectionModel<IncomingOfficialDispatch>(true, []);
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+  constructor(
+    private http: HttpClient,
+    private themykienchidaoService: ThemYKienChiDaoService,
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private config: NgSelectConfig,
+    private notifyService : NotificationService,
+    public dialog: MatDialog,
+  ) {
+      this.config.notFoundText = 'Không có kết quả tìm kiếm';
+      this.config.appendTo = 'body';
+      this.config.bindValue = 'value';
   }
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  toggleAllRows() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-      return;
-    }
-
-    this.selection.select(...this.dataSource.data);
-  }
-
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: IncomingOfficialDispatch): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.DocumentID + 1}`;
-  }
-
   canbothuchien: any[] = [];
   canbophoihop: any[] = [];
   cbth: FormControl;
@@ -66,22 +48,13 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
   selectedImplementationOfficer = new FormControl();
   selectedCoordinationOfficer = new FormControl();
   forDmata: any = new FormData();
-
-  constructor(
-    private http: HttpClient,
-    private themykienchidaoService: ThemYKienChiDaoService,
-    private fb: FormBuilder,
-    private router: Router,
-    private authService: AuthService,
-    private config: NgSelectConfig,
-    private notifyService : NotificationService,
-    ) {
-      this.config.notFoundText = 'Không có kết quả tìm kiếm';
-      this.config.appendTo = 'body';
-      this.config.bindValue = 'value';
-    }
-
+  isLoadingResults = true;
+  VanBanChiDao: IncomingOfficialDispatch[] = [];
+  displayedColumns: string[] = ['select', 'IncomingTextNumberNotation', 'ReleaseDate', 'TextExcerpt'];
+  dataSource = new MatTableDataSource<IncomingOfficialDispatch>(this.VanBanChiDao);
+  selection = new SelectionModel<IncomingOfficialDispatch>(true, []);
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.paginator._intl.itemsPerPageLabel = 'Số lượng dòng hiển thị: ';
@@ -159,6 +132,48 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
     });
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  checkboxLabel(row?: IncomingOfficialDispatch): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.DocumentID + 1}`;
+  }
+
+  openDialog(row) {
+    const cbth = this.canbothuchien;
+    const cbph = this.canbophoihop;
+    const dialogRef = this.dialog.open(ThemYKienChiDaoDialogComponent,{
+      width: '90vw',
+      maxWidth: '90vw',
+      maxHeight: '95vh',
+      data: {row, cbth, cbph},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
+
   getDataUser():void{
     this.authService.getUserLogin().subscribe({
       next: (response) => {
@@ -179,11 +194,6 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
   }
 
   onSubmit() {
-    // const HttpUploadOptions = {
-    //   headers: new HttpHeaders({
-    //     'Authorization': 'Bearer 20142|K4wwoTVRfkteDIH0mtpXmDOjIgs0lhZunmZmZKxm'
-    //  })
-    // }
     var CBThucHien = [];
     var CBPhoiHop = [];
     var CBPhoiHoparr = [];
@@ -307,6 +317,10 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       },
       complete: () => {}
     });
+  }
+
+  chonYKCD(row){
+    this.openDialog(row);
   }
 
   showToasterSuccess(message, title){

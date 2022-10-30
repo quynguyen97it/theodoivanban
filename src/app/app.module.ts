@@ -17,7 +17,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import {MatSelectModule} from '@angular/material/select';
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ToastrModule } from 'ngx-toastr';
 import {MatTableModule} from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -26,6 +25,13 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatDialogModule} from '@angular/material/dialog';
+import { ThemYKienChiDaoDialogComponent } from './them-ykien-chi-dao-dialog/them-ykien-chi-dao-dialog.component';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatCardModule} from '@angular/material/card';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MaterialFileInputModule } from 'ngx-material-file-input';
 
 @NgModule({
   declarations: [
@@ -36,7 +42,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ThongKeComponent,
     VanBanHoanThanhComponent,
     LoginComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    ThemYKienChiDaoDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +57,6 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     NgbAlertModule,
     NgSelectModule,
     MatSelectModule,
-    NgxMatSelectSearchModule,
     ToastrModule.forRoot(),
     MatTableModule,
     MatFormFieldModule,
@@ -59,6 +65,12 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatCheckboxModule,
     MatSortModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
+    MatGridListModule,
+    MatCardModule,
+    MatDatepickerModule,
+    NgxMatSelectSearchModule,
+    MaterialFileInputModule,
   ],
   providers: [XuLyVanBanService, AuthService],
   bootstrap: [AppComponent]
