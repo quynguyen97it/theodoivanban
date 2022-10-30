@@ -1,10 +1,8 @@
 <h2 mat-dialog-title>DUYỆT VĂN BẢN</h2>
 <section fxLayout="row wrap" fxLayoutAlign="center center">
-  <form [formGroup]="duyetYKCD" (ngSubmit)="duyetVBChiDao()" fxLayout="column wrap"
-    fxLayoutAlign="center center" fxLayoutGap="100px">
+  <form [formGroup]="duyetYKCD" (ngSubmit)="duyetVBChiDao()">
     <mat-dialog-content class="mat-typography">
-      <!-- <h3>{{data['row'].IncomingTextNumberNotation}}</h3> -->
-      <mat-grid-list cols="2" rowHeight="12vh">
+      <mat-grid-list cols="2" rowHeight="14vh">
         <mat-grid-tile>
           <mat-form-field appearance="outline">
             <mat-label>Số ký hiệu VB</mat-label>
@@ -78,7 +76,7 @@
         <mat-grid-tile>
           <mat-form-field appearance="outline">
             <mat-label>Cơ quan ban hành</mat-label>
-            <textarea matInput type="text" placeholder="Cơ quan ban hành" required rows="2" style="resize: none" formControlName="eCoQuanBanHanh"></textarea>
+            <textarea matInput type="text" placeholder="Cơ quan ban hành" rows="2" style="resize: none" formControlName="eCoQuanBanHanh"></textarea>
           </mat-form-field>
         </mat-grid-tile>
         <mat-grid-tile>
