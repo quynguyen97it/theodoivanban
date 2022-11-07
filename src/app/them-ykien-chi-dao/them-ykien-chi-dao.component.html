@@ -136,23 +136,22 @@
   </mat-form-field>
   <table mat-table [dataSource]="dataSource">
 
-
-  <ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef>
-      <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                    [checked]="selection.hasValue() && isAllSelected()"
-                    [indeterminate]="selection.hasValue() && !isAllSelected()"
-                    [aria-label]="checkboxLabel()">
-      </mat-checkbox>
-    </th>
-    <td mat-cell *matCellDef="let row">
-      <mat-checkbox (click)="$event.stopPropagation()"
-                    (change)="$event ? selection.toggle(row) : null"
-                    [checked]="selection.isSelected(row)"
-                    [aria-label]="checkboxLabel(row)">
-      </mat-checkbox>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                      [checked]="selection.hasValue() && isAllSelected()"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()"
+                      [aria-label]="checkboxLabel()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row) : null"
+                      [checked]="selection.isSelected(row)"
+                      [aria-label]="checkboxLabel(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
 
     <ng-container matColumnDef="IncomingTextNumberNotation">
       <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef> Số, ký hiệu của VB </th>
@@ -176,7 +175,7 @@
       (click)="selection.toggle(row)"
       (click)="chonYKCD(row)"
       >
-  </tr>
+    </tr>
 
     <tr class="mat-row" *matNoDataRow>
       <td class="mat-cell" colspan="4">Không tìm thấy dữ liệu lọc {{input.value}}</td>

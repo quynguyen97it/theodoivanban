@@ -162,11 +162,13 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
   openDialog(row) {
     const cbth = this.canbothuchien;
     const cbph = this.canbophoihop;
+    const dulieuchon: any[] = [];
+    dulieuchon.push(row);
     const dialogRef = this.dialog.open(ThemYKienChiDaoDialogComponent,{
       width: '90vw',
       maxWidth: '90vw',
       maxHeight: '95vh',
-      data: {row, cbth, cbph},
+      data: {dulieuchon, cbth, cbph},
     });
 
     dialogRef.afterClosed().subscribe(result => {

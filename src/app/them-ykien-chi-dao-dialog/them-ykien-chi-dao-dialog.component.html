@@ -2,100 +2,137 @@
 <section fxLayout="row wrap" fxLayoutAlign="center center">
   <form [formGroup]="duyetYKCD" (ngSubmit)="duyetVBChiDao()">
     <mat-dialog-content class="mat-typography">
-      <mat-grid-list cols="2" rowHeight="14vh">
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Số ký hiệu VB</mat-label>
-            <input matInput type="text" placeholder="Số ký hiệu VB" formControlName="SoKyHieuVanBan" id="SoKyHieuVanBan" required>
-            <mat-error *ngIf="hasError('SoKyHieuVanBan', 'required')">Số ký hiệu VB bắt buộc (*)</mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Cán bộ thực hiện</mat-label>
-            <mat-select formControlName="CBThucHien" placeholder="Cán bộ thực hiện" [multiple]="true" #multiSelect required>
-              <mat-option>
-                <ngx-mat-select-search [formControl]="timkiemCBTH"
-                  [placeholderLabel]="'Tìm kiếm'"
-                  [noEntriesFoundLabel]="'Không có dữ liệu tìm kiếm'"
-                >
-                </ngx-mat-select-search>
-              </mat-option>
-              <mat-option *ngFor="let th of canbothuchien" [value]="th.id">
-                {{th.FullName}}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="hasError('CBThucHien', 'required')">Cán bộ thực hiện bắt buộc (*)</mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Ngày ban hành VB</mat-label>
-            <input matInput type="date" placeholder="Ngày ban hành VB" id="NgayBanHanh" required formControlName="NgayBanHanh">
-            <mat-error *ngIf="hasError('NgayBanHanh', 'required')">Ngày ban hành VB bắt buộc (*)</mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Cán bộ phối hợp</mat-label>
-            <mat-select formControlName="CBPhoiHop" placeholder="Cán bộ phối hợp">
-              <mat-option>
-                <ngx-mat-select-search [formControl]="timkiemCBPH"
-                  [placeholderLabel]="'Tìm kiếm'"
-                  [noEntriesFoundLabel]="'Không có dữ liệu tìm kiếm'"
-                >
-                </ngx-mat-select-search>
-              </mat-option>
-              <mat-option *ngFor="let ph of canbophoihop" [value]="ph.id">
-                {{ph.FullName}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Trích yếu VB</mat-label>
-            <textarea matInput type="text" placeholder="Trích yếu VB" required rows="2" style="resize: none" formControlName="TrichYeuVanBan"></textarea>
-            <mat-error *ngIf="hasError('TrichYeuVanBan', 'required')">Trích yếu VB bắt buộc (*)</mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Ngày văn bản đến</mat-label>
-            <input matInput type="date" placeholder="Ngày văn bản đến" id="eNgayVBDen" required formControlName="eNgayVBDen">
-            <mat-error *ngIf="hasError('eNgayVBDen', 'required')">Ngày văn bản đến bắt buộc (*)</mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Thời gian hết hạn</mat-label>
-            <input matInput type="date" placeholder="Thời gian hết hạn" id="ThoiGianHetHan" required formControlName="ThoiGianHetHan">
-            <mat-error *ngIf="hasError('ThoiGianHetHan', 'required')">Thời gian hết hạn bắt buộc (*)</mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Cơ quan ban hành</mat-label>
-            <textarea matInput type="text" placeholder="Cơ quan ban hành" rows="2" style="resize: none" formControlName="eCoQuanBanHanh"></textarea>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Hình ảnh tóm tắt YKCĐ</mat-label>
-            <ngx-mat-file-input formControlName="fileTomtatCD" placeholder="Hình ảnh tóm tắt YKCĐ" [accept]="'image/jpeg, image/png'"></ngx-mat-file-input>
-            <mat-error *ngIf="duyetYKCD.get('fileTomtatCD').hasError('maxContentSize')">
-              Tổng kích thước file không được vượt quá {{duyetYKCD.get('fileTomtatCD')?.getError('maxContentSize').maxSize | byteFormat}} ({{duyetYKCD.get('fileTomtatCD')?.getError('maxContentSize').actualSize
-              | byteFormat}}).
-            </mat-error>
-          </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Tóm tắt YKCĐ</mat-label>
-            <textarea matInput type="text" placeholder="Mỗi ý kiến chỉ đạo cách nhau bởi dấu ;"rows="2" formControlName="TTYKienChiDao"></textarea>
-          </mat-form-field>
-        </mat-grid-tile>
-      </mat-grid-list>
+      <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+        <ng-container matColumnDef="SoKyHieuVanBan">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Số ký hiệu VB</mat-label>
+              <input matInput type="text" placeholder="Số ký hiệu VB" formControlName="SoKyHieuVanBan" id="SoKyHieuVanBan" required>
+              <mat-error *ngIf="hasError('SoKyHieuVanBan', 'required')">Số ký hiệu VB bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="CBThucHien">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Cán bộ thực hiện</mat-label>
+              <mat-select formControlName="CBThucHien" placeholder="Cán bộ thực hiện" [multiple]="true" #multiSelect required>
+                <mat-option>
+                  <ngx-mat-select-search [formControl]="timkiemCBTH"
+                    [placeholderLabel]="'Tìm kiếm'"
+                    [noEntriesFoundLabel]="'Không có dữ liệu tìm kiếm'"
+                  >
+                  </ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let th of canbothuchien" [value]="th.id">
+                  {{th.FullName}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="hasError('CBThucHien', 'required')">Cán bộ thực hiện bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="NgayBanHanh">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Ngày ban hành VB</mat-label>
+              <input matInput type="date" placeholder="Ngày ban hành VB" id="NgayBanHanh" required formControlName="NgayBanHanh">
+              <mat-error *ngIf="hasError('NgayBanHanh', 'required')">Ngày ban hành VB bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="CBPhoiHop">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Cán bộ phối hợp</mat-label>
+              <mat-select formControlName="CBPhoiHop" placeholder="Cán bộ phối hợp">
+                <mat-option>
+                  <ngx-mat-select-search [formControl]="timkiemCBPH"
+                    [placeholderLabel]="'Tìm kiếm'"
+                    [noEntriesFoundLabel]="'Không có dữ liệu tìm kiếm'"
+                  >
+                  </ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let ph of canbophoihop" [value]="ph.id">
+                  {{ph.FullName}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="TrichYeuVanBan">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Trích yếu VB</mat-label>
+              <textarea matInput type="text" placeholder="Trích yếu VB" required rows="2" style="resize: none" formControlName="TrichYeuVanBan"></textarea>
+              <mat-error *ngIf="hasError('TrichYeuVanBan', 'required')">Trích yếu VB bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="eNgayVBDen">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Ngày văn bản đến</mat-label>
+              <input matInput type="date" placeholder="Ngày văn bản đến" id="eNgayVBDen" required formControlName="eNgayVBDen">
+              <mat-error *ngIf="hasError('eNgayVBDen', 'required')">Ngày văn bản đến bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="ThoiGianHetHan">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Thời gian hết hạn</mat-label>
+              <input matInput type="date" placeholder="Thời gian hết hạn" id="ThoiGianHetHan" required formControlName="ThoiGianHetHan">
+              <mat-error *ngIf="hasError('ThoiGianHetHan', 'required')">Thời gian hết hạn bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="eCoQuanBanHanh">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Cơ quan ban hành</mat-label>
+              <textarea matInput type="text" placeholder="Cơ quan ban hành" rows="2" style="resize: none" formControlName="eCoQuanBanHanh"></textarea>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="fileTomtatCD">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Hình ảnh tóm tắt YKCĐ</mat-label>
+              <ngx-mat-file-input formControlName="fileTomtatCD" placeholder="Hình ảnh tóm tắt YKCĐ" [accept]="'image/jpeg, image/png'"></ngx-mat-file-input>
+              <mat-error *ngIf="duyetYKCD.get('fileTomtatCD').hasError('maxContentSize')">
+                Tổng kích thước file không được vượt quá {{duyetYKCD.get('fileTomtatCD')?.getError('maxContentSize').maxSize | byteFormat}} ({{duyetYKCD.get('fileTomtatCD')?.getError('maxContentSize').actualSize
+                | byteFormat}}).
+              </mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="TTYKienChiDao">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Tóm tắt YKCĐ</mat-label>
+              <textarea matInput type="text" placeholder="Mỗi ý kiến chỉ đạo cách nhau bởi dấu ;"rows="2" formControlName="TTYKienChiDao"></textarea>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <!-- <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> -->
+        <tr mat-row *matRowDef="let row; columns: ['SoKyHieuVanBan','CBThucHien'];"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['NgayBanHanh','CBPhoiHop'];"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['TrichYeuVanBan','eNgayVBDen'];"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['ThoiGianHetHan','eCoQuanBanHanh'];"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['fileTomtatCD','TTYKienChiDao'];"></tr>
+      </table>
 
     </mat-dialog-content>
     <mat-dialog-actions align="end">

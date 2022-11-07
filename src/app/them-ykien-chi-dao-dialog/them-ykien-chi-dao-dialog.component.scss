@@ -38,3 +38,19 @@ mat-form-field mat-label {
 {
   color: #0D6EFD !important;
 }
+
+.mat-row {
+  height: auto;
+}
+
+.mat-cell {
+  padding: 0 8px 8px 0;
+}
+
+td.mat-cell{
+  border-bottom-style: none;
+}
+
+th.mat-header-cell{
+  border-bottom-style: none;
+}
