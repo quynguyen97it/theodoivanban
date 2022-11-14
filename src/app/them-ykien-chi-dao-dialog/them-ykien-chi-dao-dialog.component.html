@@ -49,7 +49,7 @@
           <td mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
               <mat-label>Cán bộ phối hợp</mat-label>
-              <mat-select formControlName="CBPhoiHop" placeholder="Cán bộ phối hợp">
+              <mat-select formControlName="CBPhoiHop" [multiple]="true" placeholder="Cán bộ phối hợp">
                 <mat-option>
                   <ngx-mat-select-search [formControl]="timkiemCBPH"
                     [placeholderLabel]="'Tìm kiếm'"

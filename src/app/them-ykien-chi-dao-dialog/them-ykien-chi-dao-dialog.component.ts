@@ -20,8 +20,11 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
     @Inject(MAT_DIALOG_DATA) public data: IncomingOfficialDispatch[],
     private themykienchidaoService: ThemYKienChiDaoService,
     private fb: FormBuilder,
+    )
+  {
+    console.log(this.data);
+  }
 
-  ) { console.log(this.data);}
   VanBanChiDao: IncomingOfficialDispatch[] = this.data['dulieuchon'];
   dataSource = this.VanBanChiDao;
   displayedColumns: string[] = ['TextExcerpt'];
@@ -41,6 +44,8 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
       CBPhoiHop: [],
     });
 
+    this.duyetYKCD.get('CBThucHien').setValue(this.data['dscbth']);
+    this.duyetYKCD.get('CBPhoiHop').setValue(this.data['dscbph']);
     this.duyetYKCD.get('SoKyHieuVanBan').setValue(this.data['dulieuchon'][0].IncomingTextNumberNotation);
     this.duyetYKCD.get('NgayBanHanh').setValue(this.data['dulieuchon'][0].ReleaseDate);
     this.duyetYKCD.get('TrichYeuVanBan').setValue(this.data['dulieuchon'][0].TextExcerpt);

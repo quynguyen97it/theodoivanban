@@ -70,6 +70,13 @@ export class ThemYKienChiDaoService {
     )
   }
 
+  getImplementationOfficerList(DocumentID): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/dscanbothuchien', {DocumentID: DocumentID}, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
   errorHandler(error) {
     let errorMessage = '';
     if(error.error instanceof ErrorEvent) {

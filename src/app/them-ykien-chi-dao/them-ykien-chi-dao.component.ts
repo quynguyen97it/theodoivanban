@@ -38,6 +38,8 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       this.config.appendTo = 'body';
       this.config.bindValue = 'value';
   }
+  urlMauHinhAnh = this.authService.apiURL+'/storage/Mau_Hinh_Anh.png';
+  urlMauVBChiDao = this.authService.apiURL+'/storage/Mau_VB_Chi_Dao.xlsx';
   canbothuchien: any[] = [];
   canbophoihop: any[] = [];
   cbth: FormControl;
@@ -163,23 +165,47 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
     const cbth = this.canbothuchien;
     const cbph = this.canbophoihop;
     const dulieuchon: any[] = [];
+    var dscbth = [];
+    var dscbph = [];
     dulieuchon.push(row);
-    const dialogRef = this.dialog.open(ThemYKienChiDaoDialogComponent,{
-      width: '90vw',
-      maxWidth: '90vw',
-      maxHeight: '95vh',
-      data: {dulieuchon, cbth, cbph},
+
+    this.themykienchidaoService.getImplementationOfficerList(row.DocumentID).subscribe({
+      next: (response) => {
+        console.log(response);
+        for(var i=0; i<response[0].length; i++)
+        {
+          dscbth.push(response[0][i].ImplementationOfficerID);
+        }
+
+        for(var i=0; i<response[1].length; i++)
+        {
+          dscbph.push(response[1][i].CoordinationOfficerID);
+        }
+
+        const dialogRef = this.dialog.open(ThemYKienChiDaoDialogComponent,{
+          width: '90vw',
+          maxWidth: '90vw',
+          maxHeight: '95vh',
+          data: {dulieuchon, cbth, cbph, dscbth, dscbph},
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          //console.log(`Dialog result: ${result}`);
+        });
+      },
+      error: (error) => {
+        console.log('Lỗi dữ liệu!');
+      },
+      complete: () => {}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+
   }
 
   getDataUser():void{
     this.authService.getUserLogin().subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
       },
       error: (error) => {
         console.log('Lỗi dữ liệu!');
@@ -224,10 +250,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
     formData.append("TTYKienChiDao", this.themYKCD.get('TTYKienChiDao').value);
     formData.append("CBThucHien", JSON.stringify(CBThucHien));
     formData.append("CBPhoiHop", JSON.stringify(CBPhoiHop));
-    formData.append('_method', 'POST');;
-    // for (var data of formData.entries()) {
-    //   console.log(data[0]+ ', ' + data[1]);
-    // }
+    formData.append('_method', 'POST');
 
     this.themykienchidaoService.createDocument(formData).subscribe({
       next: (data) => {
@@ -239,14 +262,6 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       },
       complete: () => {}
     });
-
-    // this.http
-    //   .post('http://192.168.1.25:8001/api/themvanbanchidao', formData, HttpUploadOptions)
-    //   .subscribe({
-    //     next: (response) => console.log(response),
-    //     error: (error) => console.log(error),
-    //   });
-
   }
 
   ktFileHinhAnhTomTatYKCD(event){
@@ -311,7 +326,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
           this.themYKCD.get('CoQuanBanHanh').setValue(response['CoQuanBanHanh']);
           this.themYKCD.get('NgayVBDen').setValue(NgayDen);
           this.themYKCD.get('NgayBanHanh').setValue(NgayBanHanh);
-          console.log(response);
+          //console.log(response);
       },
       error: (error) => {
           this.showToasterError('','Quét hình ảnh thất bại!');
