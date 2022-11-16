@@ -8,6 +8,8 @@ import { take, takeUntil } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
 import { FileValidator } from 'ngx-material-file-input';
 import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from '../auth/auth.service';
+import { XacNhanXoaVBChiDaoDialogComponent } from '../xac-nhan-xoa-vbchi-dao-dialog/xac-nhan-xoa-vbchi-dao-dialog.component';
 
 @Component({
   selector: 'app-them-ykien-chi-dao-dialog',
@@ -20,14 +22,19 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
     @Inject(MAT_DIALOG_DATA) public data: IncomingOfficialDispatch[],
     private themykienchidaoService: ThemYKienChiDaoService,
     private fb: FormBuilder,
+    private authService: AuthService,
+    public dialog: MatDialog,
     )
   {
     console.log(this.data);
   }
 
   VanBanChiDao: IncomingOfficialDispatch[] = this.data['dulieuchon'];
+  urlChitietHinhanhTT = this.authService.apiURL+'/storage/'+this.VanBanChiDao[0]['summary'];
+  summaryStatus = this.VanBanChiDao[0]['summary'];
   dataSource = this.VanBanChiDao;
   displayedColumns: string[] = ['TextExcerpt'];
+  TTYKCD = this.data['dsykcd'];
 
   @ViewChild('multiSelect') multiSelect: MatSelect;
   ngOnInit(): void {
@@ -119,7 +126,65 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
   protected tmpCBPH: string[] = this.canbophoihop;
 
   duyetVBChiDao(){
-    console.log(this.dataSource);
+    var CBThucHien = [];
+    var CBPhoiHop = [];
+
+    if((this.duyetYKCD.get('CBThucHien').value) != null){
+      CBThucHien = ((this.duyetYKCD.get('CBThucHien').value).map(i=>Number(i)));
+    }
+    else{
+      this.themykienchidaoService.showToasterError('','Vui lòng chọn cán bộ thực hiện!');
+      return;
+    }
+
+    if((this.duyetYKCD.get('CBPhoiHop').value) != null)
+    {
+      CBPhoiHop = ((this.duyetYKCD.get('CBPhoiHop').value).map(i=>Number(i)));
+    }
+
+    let DocumentID = this.VanBanChiDao[0]['DocumentID'];
+    //console.log(this.dataSource);
+
+    var formData: any = new FormData();
+    formData.append("YKienChiDaoId", DocumentID);
+    formData.append("fileTomtatCD", this.duyetYKCD.get('fileTomtatCD').value);
+    formData.append("SoKyHieuVanBan", this.duyetYKCD.get('SoKyHieuVanBan').value);
+    formData.append("eNgayVBDen", this.duyetYKCD.get('eNgayVBDen').value);
+    formData.append("NgayBanHanh", this.duyetYKCD.get('NgayBanHanh').value);
+    formData.append("eCoQuanBanHanh", this.duyetYKCD.get('eCoQuanBanHanh').value);
+    formData.append("TrichYeuVanBan", this.duyetYKCD.get('TrichYeuVanBan').value);
+    formData.append("ThoiGianHetHan", this.duyetYKCD.get('ThoiGianHetHan').value);
+    formData.append("TTYKienChiDao", this.duyetYKCD.get('TTYKienChiDao').value);
+    formData.append("CBThucHien", JSON.stringify(CBThucHien));
+    formData.append("CBPhoiHop", JSON.stringify(CBPhoiHop));
+    formData.append('_method', 'POST');
+    //
+
+    this.themykienchidaoService.documentApproval(formData).subscribe({
+      next: (data) => {
+        console.log(data);
+      },
+      error: (error) => {
+        console.log('Lỗi dữ liệu!');
+      },
+      complete: () => {}
+    });
+  }
+
+  xoaYKCD(){
+    let vbxoa = this.VanBanChiDao[0];
+
+    const dialogRef = this.dialog.open(XacNhanXoaVBChiDaoDialogComponent,{
+      width: '70vw',
+      maxWidth: '90vw',
+      maxHeight: '95vh',
+      data: {vbxoa},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      //console.log(`Dialog result: ${result}`);
+    });
+
   }
 
   public hasError = (controlName: string, errorName: string) =>{

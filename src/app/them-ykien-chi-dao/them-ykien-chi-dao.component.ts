@@ -167,6 +167,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
     const dulieuchon: any[] = [];
     var dscbth = [];
     var dscbph = [];
+    var dsykcd = [];
     dulieuchon.push(row);
 
     this.themykienchidaoService.getImplementationOfficerList(row.DocumentID).subscribe({
@@ -182,11 +183,12 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
           dscbph.push(response[1][i].CoordinationOfficerID);
         }
 
+        dsykcd = response[2];
         const dialogRef = this.dialog.open(ThemYKienChiDaoDialogComponent,{
           width: '90vw',
           maxWidth: '90vw',
           maxHeight: '95vh',
-          data: {dulieuchon, cbth, cbph, dscbth, dscbph},
+          data: {dulieuchon, cbth, cbph, dscbth, dscbph, dsykcd},
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -230,7 +232,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       CBThucHien = ((this.themYKCD.get('CBThucHien').value).map(i=>Number(i)));
     }
     else{
-      this.showToasterError('','Vui lòng chọn cán bộ thực hiện!');
+      this.themykienchidaoService.showToasterError('','Vui lòng chọn cán bộ thực hiện!');
       return;
     }
 
@@ -254,13 +256,15 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
 
     this.themykienchidaoService.createDocument(formData).subscribe({
       next: (data) => {
-        this.showToasterSuccess('','Thêm dữ liệu thành công.');
+        this.themykienchidaoService.showToasterSuccess('','Thêm dữ liệu thành công.');
         console.log(data);
       },
       error: (error) => {
-        this.showToasterError('','Thêm dữ liệu thất bại! Lỗi đường truyền hoặc Trùng Số ký hiệu VB!');
+        this.themykienchidaoService.showToasterError('','Thêm dữ liệu thất bại! Lỗi đường truyền hoặc Trùng Số ký hiệu VB!');
       },
-      complete: () => {}
+      complete: () => {
+        this.ngOnInit();
+      }
     });
   }
 
@@ -297,12 +301,14 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
 
     this.themykienchidaoService.createDocumentFromFile(formData).subscribe({
       next: (data) => {
-        this.showToasterSuccess('','Thêm dữ liệu thành công.');
+        this.themykienchidaoService.showToasterSuccess('','Thêm dữ liệu thành công.');
       },
       error: (error) => {
-        this.showToasterError('','Thêm dữ liệu thất bại!');
+        this.themykienchidaoService.showToasterError('','Thêm dữ liệu thất bại!');
       },
-      complete: () => {}
+      complete: () => {
+        this.ngOnInit();
+      }
     });
   }
 
@@ -320,7 +326,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
           var NgayDen1 = NgayDen0.split("/");
           var NgayDen = NgayDen1[2]+"-"+NgayDen1[1]+"-"+NgayDen1[0];
 
-          this.showToasterSuccess('','Quét hình ảnh thành công.');
+          this.themykienchidaoService.showToasterSuccess('','Quét hình ảnh thành công.');
           this.themYKCD.get('TrichYeuVB').setValue(response['TrichYeu']);
           this.themYKCD.get('SoKyHieuVB').setValue(response['SoKyHieuVB']);
           this.themYKCD.get('CoQuanBanHanh').setValue(response['CoQuanBanHanh']);
@@ -329,7 +335,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
           //console.log(response);
       },
       error: (error) => {
-          this.showToasterError('','Quét hình ảnh thất bại!');
+          this.themykienchidaoService.showToasterError('','Quét hình ảnh thất bại!');
           console.log(error);
       },
       complete: () => {}
@@ -338,21 +344,5 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
 
   chonYKCD(row){
     this.openDialog(row);
-  }
-
-  showToasterSuccess(message, title){
-    this.notifyService.showSuccess(message, title);
-  }
-
-  showToasterError(message, title){
-      this.notifyService.showError(message, title);
-  }
-
-  showToasterInfo(message, title){
-      this.notifyService.showInfo(message, title);
-  }
-
-  showToasterWarning(message, title){
-      this.notifyService.showWarning(message, title);
   }
 }

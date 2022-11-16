@@ -49,7 +49,7 @@
           <td mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
               <mat-label>Cán bộ phối hợp</mat-label>
-              <mat-select formControlName="CBPhoiHop" [multiple]="true" placeholder="Cán bộ phối hợp">
+              <mat-select formControlName="CBPhoiHop" [multiple]="true" #multiSelect placeholder="Cán bộ phối hợp">
                 <mat-option>
                   <ngx-mat-select-search [formControl]="timkiemCBPH"
                     [placeholderLabel]="'Tìm kiếm'"
@@ -125,6 +125,27 @@
             </mat-form-field>
           </td>
         </ng-container>
+
+
+        <ng-container matColumnDef="chitietHinhanhTT">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <p *ngIf="summaryStatus != null">
+              <img id="img-default" class="mt-3 pull-left" width="250px" src="{{urlChitietHinhanhTT}}" alt="summary" />
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="chitietTT">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <p *ngFor="let tt of TTYKCD"
+            [ngStyle]="{
+              color: tt.color
+            }">
+              {{tt.nickname}}: {{tt.summary}}
+            </p>
+          </td>
+        </ng-container>
         <!-- <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> -->
         <tr mat-row *matRowDef="let row; columns: ['SoKyHieuVanBan','CBThucHien'];"></tr>
@@ -132,12 +153,13 @@
         <tr mat-row *matRowDef="let row; columns: ['TrichYeuVanBan','eNgayVBDen'];"></tr>
         <tr mat-row *matRowDef="let row; columns: ['ThoiGianHetHan','eCoQuanBanHanh'];"></tr>
         <tr mat-row *matRowDef="let row; columns: ['fileTomtatCD','TTYKienChiDao'];"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['chitietHinhanhTT','chitietTT'];"></tr>
       </table>
 
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button [mat-dialog-close]="true" cdkFocusInitial class="btn btn-sm btn-success" [disabled]="!duyetYKCD.valid">Duyệt</button>
-      <button mat-button [mat-dialog-close]="true" class="btn btn-sm btn-danger mx-2">Xoá</button>
+      <button mat-button class="btn btn-sm btn-success" [disabled]="!duyetYKCD.valid">Duyệt</button>
+      <button type="button" mat-button (click)="xoaYKCD()" class="btn btn-sm btn-danger mx-2">Xoá</button>
       <button mat-button mat-dialog-close class="btn btn-sm btn-warning">Huỷ</button>
     </mat-dialog-actions>
   </form>

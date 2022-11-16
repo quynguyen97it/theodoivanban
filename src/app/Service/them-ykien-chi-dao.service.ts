@@ -15,6 +15,7 @@ import { Users } from '../models/users';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,8 @@ export class ThemYKienChiDaoService {
     private httpClient: HttpClient,
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private notifyService : NotificationService,
     ) { }
 
   getImplementationOfficer(): Observable<any[]> {
@@ -75,6 +77,36 @@ export class ThemYKienChiDaoService {
     .pipe(
       catchError(this.errorHandler)
     )
+  }
+
+  deleteUnapprovedDocument(DocumentID): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/xoavbchuaduyet', {YKienChiDaoId: DocumentID}, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  documentApproval(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/duyetvbchidao', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  showToasterSuccess(message, title){
+    this.notifyService.showSuccess(message, title);
+  }
+
+  showToasterError(message, title){
+      this.notifyService.showError(message, title);
+  }
+
+  showToasterInfo(message, title){
+      this.notifyService.showInfo(message, title);
+  }
+
+  showToasterWarning(message, title){
+      this.notifyService.showWarning(message, title);
   }
 
   errorHandler(error) {

@@ -32,6 +32,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MaterialFileInputModule } from 'ngx-material-file-input';
+import { XacNhanXoaVBChiDaoDialogComponent } from './xac-nhan-xoa-vbchi-dao-dialog/xac-nhan-xoa-vbchi-dao-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { MaterialFileInputModule } from 'ngx-material-file-input';
     LoginComponent,
     NotFoundComponent,
     ThemYKienChiDaoDialogComponent,
+    XacNhanXoaVBChiDaoDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +59,11 @@ import { MaterialFileInputModule } from 'ngx-material-file-input';
     NgbAlertModule,
     NgSelectModule,
     MatSelectModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }),
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
