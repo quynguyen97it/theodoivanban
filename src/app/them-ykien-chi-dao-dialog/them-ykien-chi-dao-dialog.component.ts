@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { IncomingOfficialDispatch } from '../models/incoming-official-dispatch';
 import { ThemYKienChiDaoService } from '../Service/them-ykien-chi-dao.service';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -17,6 +17,8 @@ import { XacNhanXoaVBChiDaoDialogComponent } from '../xac-nhan-xoa-vbchi-dao-dia
   styleUrls: ['./them-ykien-chi-dao-dialog.component.scss']
 })
 export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+  fileControl: FormControl;
+  public files;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IncomingOfficialDispatch[],
@@ -24,9 +26,12 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
     private fb: FormBuilder,
     private authService: AuthService,
     public dialog: MatDialog,
+    private dialogRef: MatDialogRef<ThemYKienChiDaoDialogComponent>,
     )
   {
-    console.log(this.data);
+    this.fileControl = new FormControl(this.files, [
+      FileValidator.maxContentSize(this.maxSize)
+    ])
   }
 
   VanBanChiDao: IncomingOfficialDispatch[] = this.data['dulieuchon'];
@@ -35,6 +40,8 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
   dataSource = this.VanBanChiDao;
   displayedColumns: string[] = ['TextExcerpt'];
   TTYKCD = this.data['dsykcd'];
+  statusYKCD = {};
+  showYKCD = {};
 
   @ViewChild('multiSelect') multiSelect: MatSelect;
   ngOnInit(): void {
@@ -45,10 +52,18 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
       eCoQuanBanHanh: [''],
       TrichYeuVanBan: ['', Validators.required],
       ThoiGianHetHan: ['', Validators.required],
-      fileTomtatCD: [undefined,[FileValidator.maxContentSize(this.maxSize)]],
+      fileTomtatCD: ['',[FileValidator.maxContentSize(this.maxSize)]],
       TTYKienChiDao: [''],
       CBThucHien: [, Validators.required],
       CBPhoiHop: [],
+    });
+
+    this.capnhatChidao = this.fb.group({
+      eYKCD: ['', Validators.required],
+    });
+    this.TTYKCD.forEach(e => {
+      this.statusYKCD[e.SId] = true;
+      this.showYKCD[e.SId] = true;
     });
 
     this.duyetYKCD.get('CBThucHien').setValue(this.data['dscbth']);
@@ -105,6 +120,14 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
 
         this.canbophoihop =this.canbophoihop.filter(cb => cb.FullName.toLowerCase().indexOf(search) > -1);
       });
+
+      this.fileControl.valueChanges.subscribe((files: any) => {
+        if (!Array.isArray(files)) {
+          this.files = [files];
+        } else {
+          this.files = files;
+        }
+      })
   }
 
   ngAfterViewInit() {
@@ -118,6 +141,7 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
   readonly maxSize = 104857600;
   protected _onDestroy = new Subject<void>();
   duyetYKCD: FormGroup;
+  capnhatChidao: FormGroup;
   canbothuchien: any[] = this.data['cbth'];
   canbophoihop: any[] = this.data['cbph'];
   public timkiemCBTH: FormControl = new FormControl();
@@ -143,11 +167,17 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
     }
 
     let DocumentID = this.VanBanChiDao[0]['DocumentID'];
-    //console.log(this.dataSource);
+
 
     var formData: any = new FormData();
     formData.append("YKienChiDaoId", DocumentID);
-    formData.append("fileTomtatCD", this.duyetYKCD.get('fileTomtatCD').value);
+
+    if(this.files !== undefined){
+      if(this.files[0] !== null){
+        formData.append("fileTomtatCD", this.files[0]._files[0]);
+      }
+    }
+
     formData.append("SoKyHieuVanBan", this.duyetYKCD.get('SoKyHieuVanBan').value);
     formData.append("eNgayVBDen", this.duyetYKCD.get('eNgayVBDen').value);
     formData.append("NgayBanHanh", this.duyetYKCD.get('NgayBanHanh').value);
@@ -158,16 +188,17 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
     formData.append("CBThucHien", JSON.stringify(CBThucHien));
     formData.append("CBPhoiHop", JSON.stringify(CBPhoiHop));
     formData.append('_method', 'POST');
-    //
 
     this.themykienchidaoService.documentApproval(formData).subscribe({
       next: (data) => {
-        console.log(data);
+        //
       },
       error: (error) => {
-        console.log('Lỗi dữ liệu!');
+        this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
       },
-      complete: () => {}
+      complete: () => {
+        this.dialogRef.close({ result: true });
+      }
     });
   }
 
@@ -182,13 +213,94 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      if(result)
+      {
+        this.dialogRef.close({ status: true });
+      }
       //console.log(`Dialog result: ${result}`);
     });
 
   }
 
+  public suaYKCD(data){
+    this.TTYKCD.forEach(e => {
+      this.statusYKCD[e.SId] = true;
+      this.showYKCD[e.SId] = true;
+    });
+    this.statusYKCD[data.SId] = false;
+    this.capnhatChidao.get('eYKCD').setValue(data.summary);
+  }
+
+  public guicapnhatYKCD(data){
+    var formData: any = new FormData();
+    formData.append("id", data.SId);
+    formData.append("eYKCD", this.capnhatChidao.get('eYKCD').value);
+    formData.append('_method', 'POST');
+    this.themykienchidaoService.updateDirective(formData).subscribe({
+      next: (data) => {
+        //
+      },
+      error: (error) => {
+        this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
+      },
+      complete: () => {
+        this.TTYKCD.forEach(e => {
+          this.statusYKCD[e.SId] = true;
+          this.showYKCD[e.SId] = true;
+        });
+        this.dialogRef.close({ result: 'reloadData' });
+      }
+    });
+  }
+
+  public xoanoidungYKCD(tt){
+    var formData: any = new FormData();
+    formData.append("id", tt.SId);
+    formData.append('_method', 'POST');
+    this.themykienchidaoService.deleteDirective(formData).subscribe({
+      next: (data) => {
+        this.themykienchidaoService.showToasterSuccess('','Xoá thành công.');
+      },
+      error: (error) => {
+        this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
+      },
+      complete: () => {
+        this.showYKCD[tt.SId] = false;
+      }
+    });
+  }
+
+  public xoahinhanhYKCD(){
+    let DocumentID = this.VanBanChiDao[0]['DocumentID'];
+    var formData: any = new FormData();
+    formData.append("YKienChiDaoId", DocumentID);
+    formData.append('_method', 'POST');
+    this.themykienchidaoService.deleteDirectiveImage(formData).subscribe({
+      next: (data) => {
+        this.themykienchidaoService.showToasterSuccess('','Xoá hình ảnh chỉ đạo thành công.');
+      },
+      error: (error) => {
+        this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
+      },
+      complete: () => {
+        this.summaryStatus = null;
+      }
+    });
+  }
+
+  public huycapnhatChidao(){
+    this.TTYKCD.forEach(e => {
+      this.statusYKCD[e.SId] = true;
+      this.showYKCD[e.SId] = true;
+    });
+  }
+
   public hasError = (controlName: string, errorName: string) =>{
     return this.duyetYKCD.controls[controlName].hasError(errorName);
+  }
+
+  public hasError2 = (controlName: string, errorName: string) =>{
+    return this.capnhatChidao.controls[controlName].hasError(errorName);
   }
 
   public coverDate(dateData){

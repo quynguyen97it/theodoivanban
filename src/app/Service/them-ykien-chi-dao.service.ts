@@ -93,6 +93,27 @@ export class ThemYKienChiDaoService {
     )
   }
 
+  updateDirective(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/capnhatchidao', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  deleteDirective(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/xoachidao', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  deleteDirectiveImage(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/xoahinhanhchidao', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
   showToasterSuccess(message, title){
     this.notifyService.showSuccess(message, title);
   }

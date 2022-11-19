@@ -38,6 +38,8 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       this.config.appendTo = 'body';
       this.config.bindValue = 'value';
   }
+  fileReading = false;
+  imageReading = false;
   urlMauHinhAnh = this.authService.apiURL+'/storage/Mau_Hinh_Anh.png';
   urlMauVBChiDao = this.authService.apiURL+'/storage/Mau_VB_Chi_Dao.xlsx';
   canbothuchien: any[] = [];
@@ -73,11 +75,11 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
 
   ngOnInit(): void {
     this.selectedImplementationOfficer.valueChanges.subscribe(value => {
-      console.log(value);
+      //console.log(value);
     });
 
     this.selectedCoordinationOfficer.valueChanges.subscribe(value => {
-      console.log(value);
+      //console.log(value);
     });
 
     this.themykienchidaoService.getImplementationOfficer().subscribe({
@@ -85,7 +87,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
         this.canbothuchien = data;
       },
       error: (error) => {
-        console.log('Lỗi dữ liệu!');
+        this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
       },
       complete: () => {}
     });
@@ -107,7 +109,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
         this.isLoadingResults = false;
       },
       error: (error) => {
-        console.log('Lỗi dữ liệu!');
+        this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
       },
       complete: () => {}
     });
@@ -172,7 +174,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
 
     this.themykienchidaoService.getImplementationOfficerList(row.DocumentID).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         for(var i=0; i<response[0].length; i++)
         {
           dscbth.push(response[0][i].ImplementationOfficerID);
@@ -192,6 +194,15 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
         });
 
         dialogRef.afterClosed().subscribe(result => {
+          this.ngOnInit();
+
+          if(result !== undefined){
+            if(result.result == 'reloadData')
+            {
+              this.chonYKCD(row);
+            }
+          }
+
           //console.log(`Dialog result: ${result}`);
         });
       },
@@ -200,8 +211,6 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       },
       complete: () => {}
     });
-
-
   }
 
   getDataUser():void{
@@ -210,7 +219,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
         //console.log(response);
       },
       error: (error) => {
-        console.log('Lỗi dữ liệu!');
+        this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
       },
       complete: () => {}
     })
@@ -257,7 +266,7 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
     this.themykienchidaoService.createDocument(formData).subscribe({
       next: (data) => {
         this.themykienchidaoService.showToasterSuccess('','Thêm dữ liệu thành công.');
-        console.log(data);
+        //console.log(data);
       },
       error: (error) => {
         this.themykienchidaoService.showToasterError('','Thêm dữ liệu thất bại! Lỗi đường truyền hoặc Trùng Số ký hiệu VB!');
@@ -295,9 +304,10 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
   }
 
   importFileDSYKCDF(){
+    this.fileReading = true;
     var formData: any = new FormData();
     formData.append("fileDSChiDao", this.importFileDSYKCD.get('fileDSChiDao').value);
-    formData.append('_method', 'POST');;
+    formData.append('_method', 'POST');
 
     this.themykienchidaoService.createDocumentFromFile(formData).subscribe({
       next: (data) => {
@@ -308,14 +318,16 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       },
       complete: () => {
         this.ngOnInit();
+        this.fileReading = false;
       }
     });
   }
 
   importImageDSYKCDF(){
+    this.imageReading =  true;
     var formData: any = new FormData();
     formData.append("fileHinhAnhQ", this.importImageYKCD.get('fileHinhAnhQ').value);
-    formData.append('_method', 'POST');;
+    formData.append('_method', 'POST');
 
     this.themykienchidaoService.createDocumentFromImage(formData).subscribe({
       next: (response) => {
@@ -338,7 +350,9 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
           this.themykienchidaoService.showToasterError('','Quét hình ảnh thất bại!');
           console.log(error);
       },
-      complete: () => {}
+      complete: () => {
+        this.imageReading =  false;
+      }
     });
   }
 
