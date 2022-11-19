@@ -38,8 +38,15 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       this.config.appendTo = 'body';
       this.config.bindValue = 'value';
   }
+  fileTTSelectedName = '';
   fileReading = false;
+  fileReadingIcon = true;
+  fileReadingTitle = 'Đọc file và lưu dữ liệu';
+  fileSelectedName = '';
   imageReading = false;
+  imageReadingIcon = true;
+  imageReadingTitle = 'Quét hình ảnh';
+  imageSelectedName = '';
   urlMauHinhAnh = this.authService.apiURL+'/storage/Mau_Hinh_Anh.png';
   urlMauVBChiDao = this.authService.apiURL+'/storage/Mau_VB_Chi_Dao.xlsx';
   canbothuchien: any[] = [];
@@ -283,28 +290,36 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
     //   fileTomtatCD: file
     // });
     // this.themYKCD.get('fileTomtatCD').updateValueAndValidity()
+    this.fileTTSelectedName = '';
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
+      this.fileTTSelectedName = file.name;
       this.themYKCD.get('fileTomtatCD').setValue(file);
     }
   }
 
   ktFileDSYKCD(event){
+    this.fileSelectedName = '';
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
+      this.fileSelectedName = file.name;
       this.importFileDSYKCD.get('fileDSChiDao').setValue(file);
     }
   }
 
   ktImageDSYKCD(event){
+    this.imageSelectedName = '';
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
+      this.imageSelectedName = file.name;
       this.importImageYKCD.get('fileHinhAnhQ').setValue(file);
     }
   }
 
   importFileDSYKCDF(){
     this.fileReading = true;
+    this.fileReadingIcon = false;
+    this.fileReadingTitle = 'Đang đọc và lưu dữ liệu...';
     var formData: any = new FormData();
     formData.append("fileDSChiDao", this.importFileDSYKCD.get('fileDSChiDao').value);
     formData.append('_method', 'POST');
@@ -319,12 +334,16 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
       complete: () => {
         this.ngOnInit();
         this.fileReading = false;
+        this.fileReadingIcon = true;
+        this.fileReadingTitle = 'Đọc file và lưu dữ liệu';
       }
     });
   }
 
   importImageDSYKCDF(){
-    this.imageReading =  true;
+    this.imageReading = true;
+    this.imageReadingIcon = false;
+    this.imageReadingTitle = 'Đang quét hình ảnh...';
     var formData: any = new FormData();
     formData.append("fileHinhAnhQ", this.importImageYKCD.get('fileHinhAnhQ').value);
     formData.append('_method', 'POST');
@@ -351,7 +370,9 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
           console.log(error);
       },
       complete: () => {
-        this.imageReading =  false;
+        this.imageReading = false;
+        this.imageReadingIcon = true;
+        this.imageReadingTitle = 'Quét hình ảnh';
       }
     });
   }

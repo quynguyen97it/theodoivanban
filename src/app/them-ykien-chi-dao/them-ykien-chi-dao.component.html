@@ -62,7 +62,7 @@
                           <input type="file" (change)="ktFileHinhAnhTomTatYKCD($event)" id="fileTomtatCD" class="form-control" accept="image/jpeg, image/png" style="display:none">
                           <i class="fa fa-paperclip" aria-hidden="true"></i>
                       </label>
-                      <span id="fileTomtatCDSelectedName"></span>
+                      <span>{{fileTTSelectedName}}</span>
                   </td>
                   <th class="border-3" colspan="1"><label for="TTYKienChiDao" class="form-label">Tóm tắt ý kiến chỉ đạo</label></th>
                   <td class="border-3" colspan="2">
@@ -91,10 +91,12 @@
         </label>
       </td>
       <td>
-        <span id="fileDSChiDaoSelectedName"></span>
+        <span>{{fileSelectedName}}</span>
       </td>
       <td>
-        <button class="btn btn-sm btn-outline-info fw-bold" [disabled]="!importFileDSYKCD.valid" type="submit"><i *ngIf="fileReading" class="fa fa-spinner fa-spin"></i> <i class="fa fa-list-alt" aria-hidden="true"></i> Đọc file và lưu dữ liệu</button>
+        <button class="btn btn-sm btn-outline-info fw-bold" [disabled]="!importFileDSYKCD.valid" type="submit">
+          <i *ngIf="fileReading" class="fa fa-spinner fa-spin"></i>
+          <i *ngIf="fileReadingIcon" class="fa fa-list-alt" aria-hidden="true"></i> {{fileReadingTitle}}</button>
         <a class="px-3" href="{{urlMauVBChiDao}}" target="blank">Mau_VB_Chi_Dao.xlsx</a>
       </td>
     </tr>
@@ -111,13 +113,13 @@
         </label>
       </td>
       <td>
-        <span id="imageSelectedName"></span>
+        <span>{{imageSelectedName}}</span>
       </td>
       <td>
         <button id="btnQuetHinhanh" class="btn btn-sm btn-outline-info fw-bold" [disabled]="!importImageYKCD.valid" type="submit">
           <i *ngIf="imageReading" class="fa fa-spinner fa-spin"></i>
-          <i class="fa fa-picture-o" aria-hidden="true"></i>
-          <span class="btn-txt"> Quét hình ảnh</span>
+          <i *ngIf="imageReadingIcon" class="fa fa-picture-o" aria-hidden="true"></i>
+          <span class="btn-txt"> {{imageReadingTitle}}</span>
         </button>
         <a class="px-3" href="{{urlMauHinhAnh}}" target="blank">Mau_Hinh_Anh.png</a>
       </td>
