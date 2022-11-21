@@ -65,7 +65,7 @@
     <ng-container matColumnDef="DaThucHien">
       <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Đã thực hiện</th>
       <td mat-cell [ngClass]="['contentTextExcerpt', 'tableContent']" *matCellDef="let element">
-        <button type="button" class="btn btn-sm text-success mb-2"><i class="fa fa-plus-circle" aria-hidden="true"></i> Hoàn thành</button>
+        <button type="button" class="btn btn-sm text-success mb-2" (click)="daThuchien()"><i class="fa fa-plus-circle" aria-hidden="true"></i> Hoàn thành</button>
         <ul *ngFor="let dath of dathuchien">
           <li *ngIf="element.DocumentID == dath.OriginalDispatchID">
             <span class="fw-bold">{{dath.ReleaseDateTravel | date: 'dd/MM/yyyy'}}: </span>

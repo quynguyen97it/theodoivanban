@@ -19,6 +19,7 @@ import { XuLyVanBanService } from '../Service/xu-ly-van-ban.service';
 import { ThemTienDoThucHienDialogComponent } from '../them-tien-do-thuc-hien-dialog/them-tien-do-thuc-hien-dialog.component';
 import { CapNhatTienDoThucHienComponent } from '../cap-nhat-tien-do-thuc-hien/cap-nhat-tien-do-thuc-hien.component';
 import { XacNhanXoaTienDoThucHienComponent } from '../xac-nhan-xoa-tien-do-thuc-hien/xac-nhan-xoa-tien-do-thuc-hien.component';
+import { ThemDaThucHienComponent } from '../them-da-thuc-hien/them-da-thuc-hien.component';
 
 @Component({
   selector: 'app-xu-ly-van-ban',
@@ -140,6 +141,12 @@ export class XuLyVanBanComponent implements OnInit {
   capnhatTiendoThuchien(row){
     const dulieuchon: any[] = [];
     dulieuchon.push(row);
+    const fileTD = [];
+    this.filetiendothuchien.forEach(filetdth => {
+      if(row.id == filetdth.ProgressID && filetdth.namePF1 != null && filetdth.pathPF1 != null){
+        fileTD.push(filetdth);
+      }
+    });
 
     const dialogRef = this.dialog.open(CapNhatTienDoThucHienComponent,{
       // backdropClass: 'cdk-overlay-transparent-backdrop',
@@ -147,7 +154,7 @@ export class XuLyVanBanComponent implements OnInit {
       width: '70vw',
       maxWidth: '90vw',
       maxHeight: '95vh',
-      data: {dulieuchon},
+      data: {dulieuchon, fileTD},
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -173,4 +180,21 @@ export class XuLyVanBanComponent implements OnInit {
     });
   }
 
+  daThuchien(row){
+    const dulieuchon: any[] = [];
+    dulieuchon.push(row);
+
+    const dialogRef = this.dialog.open(ThemDaThucHienComponent,{
+      // backdropClass: 'cdk-overlay-transparent-backdrop',
+      // hasBackdrop: true,
+      width: '70vw',
+      maxWidth: '90vw',
+      maxHeight: '95vh',
+      data: {dulieuchon},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.ngOnInit();
+    });
+  }
 }
