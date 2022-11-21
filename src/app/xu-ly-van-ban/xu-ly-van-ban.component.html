@@ -1,1 +1,134 @@
-<p>xu-ly-van-ban works!</p>
+<div class="mat-elevation-z8">
+  <div class="loading-shade"
+       *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  </div>
+  <mat-form-field appearance="standard">
+    <mat-label>Tìm kiếm</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Nhập nội dung cần tìm..." #input>
+  </mat-form-field>
+  <table mat-table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                      [checked]="selection.hasValue() && isAllSelected()"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()"
+                      [aria-label]="checkboxLabel()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row) : null"
+                      [checked]="selection.isSelected(row)"
+                      [aria-label]="checkboxLabel(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="VanBanDen">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Văn bản đến</th>
+      <td mat-cell [ngClass]="['contentIncomingTextNumberNotation', 'tableContent']" *matCellDef="let element">
+        <p><span class="fw-bold">Số, ký hiệu VB đến: </span>
+          <span class="fw-bold text-primary">{{element.IncomingTextNumberNotation}}</span>
+        </p>
+        <p><span class="fw-bold">Ngày phát hành: </span>{{element.ReleaseDate | date: 'dd/MM/yyyy'}}</p>
+        <p><span class="fw-bold">Ngày hết hạn xử lý: </span>
+          <span *ngIf="element.TGConLai > 0 && element.TGConLai <= 3" class="text-warning">{{element.ExpirationDate | date: 'dd/MM/yyyy'}}</span>
+          <span *ngIf="element.TGConLai <= 0" class="text-danger">{{element.ExpirationDate | date: 'dd/MM/yyyy'}}</span>
+          <span *ngIf="element.TGConLai > 3" class="text-dark">{{element.ExpirationDate | date: 'dd/MM/yyyy'}}</span>
+        </p>
+        <p>{{element.TextExcerpt}}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="DangThucHien">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Đang thực hiện</th>
+      <td [ngClass]="['tableContent']" mat-cell *matCellDef="let element">
+        <button type="button" class="btn btn-sm text-success mb-2" (click)="tiendoThuchien(element)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Thêm tiến độ</button>
+        <ul *ngFor="let dangth of dangthuchien">
+          <li *ngIf="element.DocumentID == dangth.DocumentID">
+            <span class="fw-bold">{{dangth.ImplementationDate | date: 'dd/MM/yyyy'}}: </span>
+            <span class="fw-bold">{{dangth.ImplementationContent}}</span>
+            <p *ngFor="let filetdth of filetiendothuchien">
+              <span *ngIf="dangth.id == filetdth.ProgressID && filetdth.namePF1 != null && filetdth.pathPF1 != null">
+                <a href="{{urlFile}}{{filetdth.pathPF1}}" target="blank">{{filetdth.namePF1}}</a>
+              </span>
+            </p>
+            <button type="button" class="btn btn-sm text-success" (click)="capnhatTiendoThuchien(dangth)"><i class="fa fa-pencil-square-o"></i></button>
+            <button type="button" class="btn btn-sm text-danger" (click)="xoaTiendoThuchien(dangth)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+          </li>
+        </ul>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="DaThucHien">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Đã thực hiện</th>
+      <td mat-cell [ngClass]="['contentTextExcerpt', 'tableContent']" *matCellDef="let element">
+        <button type="button" class="btn btn-sm text-success mb-2"><i class="fa fa-plus-circle" aria-hidden="true"></i> Hoàn thành</button>
+        <ul *ngFor="let dath of dathuchien">
+          <li *ngIf="element.DocumentID == dath.OriginalDispatchID">
+            <span class="fw-bold">{{dath.ReleaseDateTravel | date: 'dd/MM/yyyy'}}: </span>
+            <span class="fw-bold">{{dath.Contents}}</span>
+            <p *ngIf="dath.nameODF1 != null && dath.pathODF1 != null">
+              <a href="{{urlFile}}{{dath.pathODF1}}" target="blank">{{dath.nameODF1}}</a>
+            </p>
+            <button type="button" class="btn btn-sm text-success"><i class="fa fa-pencil-square-o"></i></button>
+            <button type="button" class="btn btn-sm text-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+          </li>
+        </ul>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="TrangThai">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Trạng thái</th>
+      <td mat-cell [ngClass]="['contentTextExcerpt', 'tableContent']" *matCellDef="let element">
+        <span *ngIf="element.ExecutionStatus == 1; then thenBlock else elseBlock"></span>
+
+              <ng-template #thenBlock>
+                <span *ngIf="element.TGConLai > 0 && element.TGConLai <= 3" class="fw-bold text-warning">Chưa hoàn thành (Sắp hết hạn)</span>
+                <span *ngIf="element.TGConLai <= 0" class="fw-bold text-danger">Chưa hoàn thành (Đã trễ hạn)</span>
+                <span *ngIf="element.TGConLai > 3" class="fw-bold text-dark">Chưa hoàn thành</span>
+              </ng-template>
+
+              <ng-template #elseBlock>
+                <span class="fw-bold text-success">Hoàn thành</span>
+              </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="YKienChiDao">
+      <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Ý kiến chỉ đạo</th>
+      <td mat-cell [ngClass]="['contentTextExcerpt', 'tableContent']" *matCellDef="let element">
+        <p *ngIf="element.summary != null">
+          <img width="250px" src="{{urlChitietHinhanhTT}}{{element.summary}}" alt="summary" />
+        </p>
+        <ul *ngFor="let ykcd of ykienchidao">
+          <li *ngIf="element.DocumentID == ykcd.IncomingOfficialDispatchID">
+            <p [ngStyle]="{color: ykcd.color}">
+              <span class="fw-bold" *ngIf="ykcd.summaryDate != null">{{ykcd.summaryDate | date: 'dd/MM/yyyy'}}: </span>
+              <span class="fw-bold">{{ykcd.nickname}}: </span>
+              <span class="fw-bold">{{ykcd.summary}}</span>
+            </p>
+          </li>
+        </ul>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+      [class.selected]="row.selected"
+      (click)="row.selected= !row.selected"
+      (click)="selection.toggle(row)"
+      >
+    </tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">Không tìm thấy dữ liệu lọc {{input.value}}</td>
+    </tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                 showFirstLastButtons>
+  </mat-paginator>
+</div>

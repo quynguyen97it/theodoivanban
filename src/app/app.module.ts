@@ -33,6 +33,12 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MaterialFileInputModule } from 'ngx-material-file-input';
 import { XacNhanXoaVBChiDaoDialogComponent } from './xac-nhan-xoa-vbchi-dao-dialog/xac-nhan-xoa-vbchi-dao-dialog.component';
+import { ThemTienDoThucHienDialogComponent } from './them-tien-do-thuc-hien-dialog/them-tien-do-thuc-hien-dialog.component';
+import { CapNhatTienDoThucHienComponent } from './cap-nhat-tien-do-thuc-hien/cap-nhat-tien-do-thuc-hien.component';
+import { XacNhanXoaTienDoThucHienComponent } from './xac-nhan-xoa-tien-do-thuc-hien/xac-nhan-xoa-tien-do-thuc-hien.component';
+import { ThemDaThucHienComponent } from './them-da-thuc-hien/them-da-thuc-hien.component';
+import { CapNhatDaThucHienComponent } from './cap-nhat-da-thuc-hien/cap-nhat-da-thuc-hien.component';
+import { XoaDaThucHienComponent } from './xoa-da-thuc-hien/xoa-da-thuc-hien.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +52,12 @@ import { XacNhanXoaVBChiDaoDialogComponent } from './xac-nhan-xoa-vbchi-dao-dial
     NotFoundComponent,
     ThemYKienChiDaoDialogComponent,
     XacNhanXoaVBChiDaoDialogComponent,
+    ThemTienDoThucHienDialogComponent,
+    CapNhatTienDoThucHienComponent,
+    XacNhanXoaTienDoThucHienComponent,
+    ThemDaThucHienComponent,
+    CapNhatDaThucHienComponent,
+    XoaDaThucHienComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,7 +73,7 @@ import { XacNhanXoaVBChiDaoDialogComponent } from './xac-nhan-xoa-vbchi-dao-dial
     MatSelectModule,
     ToastrModule.forRoot({
       timeOut: 3000,
-      positionClass: 'toast-bottom-right',
+      positionClass: 'toast-bottom-center',
       preventDuplicates: true,
     }),
     MatTableModule,

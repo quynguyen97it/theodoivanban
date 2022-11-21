@@ -24,6 +24,16 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
+  ngOnInit(): void {
+    this.auth_token = this.getAuthorizationToken();
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.auth_token
+      })
+    }
+  }
+
   login(username: string, password: string) {
     return this.http.post<any>(`${this.apiURL}/api/login`, {username: username, password: password})
     .pipe(
@@ -32,7 +42,7 @@ export class AuthService {
           localStorage.setItem('currentUser', JSON.stringify(res));
           if (this.redirectUrl) {
             this.router.navigate([this.redirectUrl]);
-            this.redirectUrl = '';
+            //this.redirectUrl = '';
           }
 
         } else {

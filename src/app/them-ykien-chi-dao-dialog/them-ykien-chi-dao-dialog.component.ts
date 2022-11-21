@@ -31,7 +31,7 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
   {
     this.fileControl = new FormControl(this.files, [
       FileValidator.maxContentSize(this.maxSize)
-    ])
+    ]);
   }
 
   VanBanChiDao: IncomingOfficialDispatch[] = this.data['dulieuchon'];
@@ -127,7 +127,7 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
         } else {
           this.files = files;
         }
-      })
+      });
   }
 
   ngAfterViewInit() {

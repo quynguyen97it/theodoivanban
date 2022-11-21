@@ -1,6 +1,6 @@
 export interface ImplementationProgress {
-  id: number;
-  DocumentID: number;
-  ImplementationDate: Date;
+  id: string;
+  DocumentID: string;
+  ImplementationDate: string;
   ImplementationContent: string;
 }

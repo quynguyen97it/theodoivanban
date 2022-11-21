@@ -28,7 +28,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.authService.redirectUrl;
+      //this.authService.redirectUrl;
+      this.router.navigate(['']);
     }
 
     this.loginForm = this.fb.group({
@@ -51,12 +52,14 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.username.value, this.password.value)
     .subscribe({
       next: (response) => {
-        this.router.navigate(['']);
       },
       error: (error) => {
         console.log('Sai tên đăng nhập hoặc mật khẩu!');
       },
-      complete: () => {}
+      complete: () => {
+        this.authService.ngOnInit();
+        this.authService.redirectUrl;
+      }
     })
   }
 

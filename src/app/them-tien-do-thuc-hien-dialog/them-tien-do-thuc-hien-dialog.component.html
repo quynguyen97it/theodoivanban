@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>THÊM TIẾN ĐỘ THỰC HIỆN</h2>
+<section fxLayout="row wrap" fxLayoutAlign="center center">
+  <form [formGroup]="themTD" (ngSubmit)="capnhatTienDo()">
+    <mat-dialog-content class="mat-typography">
+      <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+        <ng-container matColumnDef="NgayThucHien">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Ngày thực hiện</mat-label>
+              <input matInput type="date" placeholder="Ngày thực hiện" id="NgayThucHien" required formControlName="NgayThucHien">
+              <mat-error *ngIf="hasError('NgayThucHien', 'required')">Ngày thực hiện bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="NoiDungThucHien">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Nội dung thực hiện</mat-label>
+              <textarea matInput type="text" placeholder="Nội dung thực hiện..."rows="2" formControlName="NoiDungThucHien"></textarea>
+              <mat-error *ngIf="hasError('NoiDungThucHien', 'required')">Nội dung thực hiện bắt buộc (*)</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fileTomtatCD">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>Tệp đính kèm</mat-label>
+              <ngx-mat-file-input [formControl]="fileControl" placeholder="Tệp đính kèm" [accept]="'application/pdf'"></ngx-mat-file-input>
+              <mat-error *ngIf="themTD.get('fileTomtatCD').hasError('maxContentSize')">
+                Tổng kích thước file không được vượt quá {{themTD.get('fileTomtatCD')?.getError('maxContentSize').maxSize | byteFormat}} ({{themTD.get('fileTomtatCD')?.getError('maxContentSize').actualSize
+                | byteFormat}}).
+              </mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr mat-row *matRowDef="let row; columns: ['NgayThucHien','NoiDungThucHien'];"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['fileTomtatCD'];"></tr>
+      </table>
+
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button class="btn btn-sm btn-success mx-2" [disabled]="!themTD.valid">Thêm tiến độ</button>
+      <button mat-button mat-dialog-close class="btn btn-sm btn-warning">Huỷ</button>
+    </mat-dialog-actions>
+  </form>
+</section>
