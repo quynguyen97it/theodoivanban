@@ -1,1 +1,10 @@
-<p>xoa-da-thuc-hien works!</p>
+<h2 mat-dialog-title>XÁC NHẬN XOÁ NỘI DUNG HOÀN THÀNH</h2>
+<section fxLayout="row wrap" fxLayoutAlign="center center">
+  <mat-dialog-content class="mat-typography">
+    <p>Bạn có chắc muốn xoá nội dung: <span class="fw-bold">{{vbdi['ReleaseDateTravel'] | date: 'dd/MM/yyyy'}}: {{vbdi['Contents']}}</span> ?</p>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="true" (click)="xoaNoiDungHoanThanh()" class="btn btn-sm btn-danger mx-2">Xoá nội dung hoàn thành</button>
+    <button type="button" mat-button mat-dialog-close class="btn btn-sm btn-warning">Huỷ</button>
+  </mat-dialog-actions>
+</section>

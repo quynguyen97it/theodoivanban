@@ -72,6 +72,27 @@ export class XuLyVanBanService {
     )
   }
 
+  updateComplete(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/capnhathoanthanh', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  deleteFileComplete(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/xoafilehoanthanh', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
+  deleteComplete(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/xoahoanthanh', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
   showToasterSuccess(message, title){
     this.notifyService.showSuccess(message, title);
   }

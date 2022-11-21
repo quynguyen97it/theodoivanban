@@ -73,8 +73,8 @@
             <p *ngIf="dath.nameODF1 != null && dath.pathODF1 != null">
               <a href="{{urlFile}}{{dath.pathODF1}}" target="blank">{{dath.nameODF1}}</a>
             </p>
-            <button type="button" class="btn btn-sm text-success"><i class="fa fa-pencil-square-o"></i></button>
-            <button type="button" class="btn btn-sm text-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            <button type="button" class="btn btn-sm text-success" (click)="capnhatHoanthanh(dath)"><i class="fa fa-pencil-square-o"></i></button>
+            <button type="button" class="btn btn-sm text-danger" (click)="xoaHoanthanh(dath)"><i class="fa fa-trash" aria-hidden="true"></i></button>
           </li>
         </ul>
       </td>
