@@ -7,9 +7,9 @@
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-              <mat-label>Ngày thực hiện</mat-label>
-              <input matInput type="date" placeholder="Ngày thực hiện" id="NgayVBDi" required formControlName="NgayVBDi">
-              <mat-error *ngIf="hasError('NgayVBDi', 'required')">Ngày thực hiện bắt buộc (*)</mat-error>
+              <mat-label>Ngày hoàn thành</mat-label>
+              <input matInput type="date" placeholder="Ngày hoàn thành" id="NgayVBDi" required formControlName="NgayVBDi">
+              <mat-error *ngIf="hasError('NgayVBDi', 'required')">Ngày hoàn thành bắt buộc (*)</mat-error>
             </mat-form-field>
           </td>
         </ng-container>
@@ -18,9 +18,9 @@
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-              <mat-label>Nội dung thực hiện</mat-label>
-              <textarea matInput type="text" placeholder="Nội dung thực hiện..."rows="2" formControlName="NoiDungVBDi"></textarea>
-              <mat-error *ngIf="hasError('NoiDungVBDi', 'required')">Nội dung thực hiện bắt buộc (*)</mat-error>
+              <mat-label>Nội dung hoàn thành</mat-label>
+              <textarea matInput type="text" placeholder="Nội dung hoàn thành..."rows="2" formControlName="NoiDungVBDi"></textarea>
+              <mat-error *ngIf="hasError('NoiDungVBDi', 'required')">Nội dung hoàn thành bắt buộc (*)</mat-error>
             </mat-form-field>
           </td>
         </ng-container>

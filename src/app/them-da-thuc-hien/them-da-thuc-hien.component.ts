@@ -61,9 +61,9 @@ export class ThemDaThucHienComponent implements OnInit {
     formData.append("NgayVBDi", this.themHT.get('NgayVBDi').value);
     formData.append("NoiDungVBDi", this.themHT.get('NoiDungVBDi').value);
     formData.append('_method', 'POST');
-    this.xulyvanbanService.createProgress(formData).subscribe({
+    this.xulyvanbanService.createComplete(formData).subscribe({
       next: (data) => {
-        this.xulyvanbanService.showToasterSuccess('','Thêm tiến độ thực hiện thành công.');
+        this.xulyvanbanService.showToasterSuccess('','Kết thúc văn bản thành công.');
       },
       error: (error) => {
         this.xulyvanbanService.showToasterError('','Lỗi dữ liệu!');
