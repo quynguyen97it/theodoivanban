@@ -27,7 +27,7 @@ export class CapNhatTienDoThucHienComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
+    //console.log(this.data);
 
     this.capnhatTD = this.fb.group({
       NgayThucHien: ['', Validators.required],

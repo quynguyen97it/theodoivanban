@@ -38,7 +38,13 @@
           <span *ngIf="element.TGConLai <= 0" class="text-danger">{{element.ExpirationDate | date: 'dd/MM/yyyy'}}</span>
           <span *ngIf="element.TGConLai > 3" class="text-dark">{{element.ExpirationDate | date: 'dd/MM/yyyy'}}</span>
         </p>
-        <p>{{element.TextExcerpt}}</p>
+        <p>
+          <span class="fw-bold">Người thực hiện: </span>
+          <span *ngFor="let nguoith of nguoithuchienvb" class="text-dark">
+            <span class="fw-bold text-primary" *ngIf="element.DocumentID == nguoith.IncomingOfficialDispatchID">{{nguoith.FullName}}; </span>
+          </span>
+        </p>
+        <p class="fw-bold">{{element.TextExcerpt}}</p>
       </td>
     </ng-container>
 
@@ -86,8 +92,12 @@
         <span *ngIf="element.ExecutionStatus == 1; then thenBlock else elseBlock"></span>
 
               <ng-template #thenBlock>
-                <span *ngIf="element.TGConLai > 0 && element.TGConLai <= 3" class="fw-bold text-warning">Chưa hoàn thành (Sắp hết hạn)</span>
-                <span *ngIf="element.TGConLai <= 0" class="fw-bold text-danger">Chưa hoàn thành (Đã trễ hạn)</span>
+                <div *ngIf="element.TGConLai > 0 && element.TGConLai <= 3" class="bg-warning p-2 rounded">
+                  <span class="fw-bold text-dark">Chưa hoàn thành (Sắp hết hạn)</span>
+                </div>
+                <div *ngIf="element.TGConLai <= 0" class="bg-danger p-2 rounded">
+                  <span class="fw-bold text-dark">Chưa hoàn thành (Đã trễ hạn)</span>
+                </div>
                 <span *ngIf="element.TGConLai > 3" class="fw-bold text-dark">Chưa hoàn thành</span>
               </ng-template>
 

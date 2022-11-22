@@ -39,6 +39,8 @@ import { XacNhanXoaTienDoThucHienComponent } from './xac-nhan-xoa-tien-do-thuc-h
 import { ThemDaThucHienComponent } from './them-da-thuc-hien/them-da-thuc-hien.component';
 import { CapNhatDaThucHienComponent } from './cap-nhat-da-thuc-hien/cap-nhat-da-thuc-hien.component';
 import { XoaDaThucHienComponent } from './xoa-da-thuc-hien/xoa-da-thuc-hien.component';
+import {MatRadioModule} from '@angular/material/radio';
+import { ThemYKienChiDaoTKComponent } from './them-ykien-chi-dao-tk/them-ykien-chi-dao-tk.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +60,7 @@ import { XoaDaThucHienComponent } from './xoa-da-thuc-hien/xoa-da-thuc-hien.comp
     ThemDaThucHienComponent,
     CapNhatDaThucHienComponent,
     XoaDaThucHienComponent,
+    ThemYKienChiDaoTKComponent,
   ],
   imports: [
     BrowserModule,
@@ -89,6 +92,7 @@ import { XoaDaThucHienComponent } from './xoa-da-thuc-hien/xoa-da-thuc-hien.comp
     MatDatepickerModule,
     NgxMatSelectSearchModule,
     MaterialFileInputModule,
+    MatRadioModule,
   ],
   providers: [XuLyVanBanService, AuthService],
   bootstrap: [AppComponent]

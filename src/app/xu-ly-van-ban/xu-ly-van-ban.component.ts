@@ -57,6 +57,7 @@ export class XuLyVanBanComponent implements OnInit {
   selection = new SelectionModel<IncomingOfficialDispatch>(true, []);
   displayedColumns: string[] = ['select', 'VanBanDen', 'DangThucHien', 'DaThucHien','TrangThai','YKienChiDao'];
   urlChitietHinhanhTT = this.authService.apiURL+'/storage/';
+  nguoithuchienvb: any[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngAfterViewInit(): void {
@@ -77,12 +78,13 @@ export class XuLyVanBanComponent implements OnInit {
     this.xulyvanbanService.getDocuments().subscribe({
       next: (data) => {
         //this.dulieuxuly = data;
-        console.log(data);
+        //console.log(data);
         this.vanbanden = data[0];
         this.dangthuchien = data[3];
         this.filetiendothuchien = data[4];
         this.dathuchien = data[7];
         this.ykienchidao = data[5];
+        this.nguoithuchienvb = data[6];
         this.dataSource = new MatTableDataSource<IncomingOfficialDispatch>(data[0]);
         this.dataSource.paginator = this.paginator;
         this.isLoadingResults = false;
