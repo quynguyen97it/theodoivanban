@@ -10,7 +10,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/build-angular": "^14.2.6",
+    "@angular-devkit/build-angular": "^15.0.1",
     "@angular-material-components/file-input": "^8.0.0",
     "@angular/animations": "^14.2.7",
     "@angular/cdk": "^14.2.4",
@@ -28,6 +28,7 @@
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.2",
     "jquery": "^3.6.1",
+    "ng-image-fullscreen-view": "^3.0.3",
     "ngx-mat-select-search": "^5.0.0",
     "ngx-material-file-input": "^4.0.0",
     "ngx-toastr": "^15.2.1",

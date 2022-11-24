@@ -14,6 +14,9 @@ export class AuthService {
   apiURL = 'http://localhost:8001';
   errorData: {};
   public redirectUrl: string;
+  currentIndex: any = -1;
+  showFlag: any = false;
+  imageObject: Array<object> = [];
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -88,6 +91,17 @@ export class AuthService {
         throw 'error in source. Details: ' + err;
       })
     )
+  }
+
+  showLightbox(index, imgURL) {
+    this.imageObject = [{ image: imgURL}];
+    this.currentIndex = index;
+    this.showFlag = true;
+  }
+
+  closeEventHandler() {
+    this.showFlag = false;
+    this.currentIndex = -1;
   }
 
   errorHandler(error) {

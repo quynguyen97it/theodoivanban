@@ -111,7 +111,7 @@
       <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Ý kiến chỉ đạo</th>
       <td mat-cell [ngClass]="['contentTextExcerpt', 'tableContent']" *matCellDef="let element">
         <p *ngIf="element.summary != null">
-          <img width="250px" src="{{urlChitietHinhanhTT}}{{element.summary}}" alt="summary" />
+          <img width="250px" src="{{urlChitietHinhanhTT}}{{element.summary}}" (click)="showLightbox(i,urlChitietHinhanhTT+element.summary)" alt="summary" />
         </p>
         <ul *ngFor="let ykcd of ykienchidao">
           <li *ngIf="element.DocumentID == ykcd.IncomingOfficialDispatchID">
@@ -142,3 +142,10 @@
                  showFirstLastButtons>
   </mat-paginator>
 </div>
+
+<ng-image-fullscreen-view
+        [images]="imageObject"
+        [imageIndex]="currentIndex"
+        [show]="showFlag"
+        (close)="closeEventHandler()">
+</ng-image-fullscreen-view>

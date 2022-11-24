@@ -24,6 +24,7 @@ import { CapNhatDaThucHienComponent } from '../cap-nhat-da-thuc-hien/cap-nhat-da
 import { XoaDaThucHienComponent } from '../xoa-da-thuc-hien/xoa-da-thuc-hien.component';
 import { ThongKeService } from '../Service/thong-ke.service';
 import { ThemYKienChiDaoTKComponent } from '../them-ykien-chi-dao-tk/them-ykien-chi-dao-tk.component';
+import {TraCuuVanBanService} from '../Service/tra-cuu-van-ban.service';
 
 @Component({
   selector: 'app-tra-cuu-van-ban',
@@ -42,6 +43,7 @@ export class TraCuuVanBanComponent implements OnInit {
     private notifyService : NotificationService,
     public dialog: MatDialog,
     private thongkeService: ThongKeService,
+    private tracuuService: TraCuuVanBanService,
   ) {
     this.config.notFoundText = 'Không có kết quả tìm kiếm';
     this.config.appendTo = 'body';
@@ -55,18 +57,21 @@ export class TraCuuVanBanComponent implements OnInit {
   ykienchidao: any[] = [];
   vanbanden: any[] = [];
   filetiendothuchien: any[] = [];
-  isLoadingResults = true;
+  isLoadingResults = false;
   urlFile = this.authService.apiURL+'/generate-pdf/';
   selection = new SelectionModel<IncomingOfficialDispatch>(true, []);
   displayedColumns: string[] = ['select', 'VanBanDen', 'DangThucHien', 'DaThucHien','TrangThai','YKienChiDao'];
   urlChitietHinhanhTT = this.authService.apiURL+'/storage/';
   statusSelected = '1';
-  thongkeVB: FormGroup;
+  timkiemVB: FormGroup;
   canbothuchien: any[] = [];
   nguoithuchienvb: any[] = [];
   public timkiemCBTH: FormControl = new FormControl();
   protected _onDestroy = new Subject<void>();
   protected tmpCBTH: any[] = [];
+  currentIndex: any = -1;
+  showFlag: any = false;
+  imageObject: Array<object> = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngAfterViewInit(): void {
@@ -84,33 +89,33 @@ export class TraCuuVanBanComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.thongkeVB = this.fb.group({
+    this.timkiemVB = this.fb.group({
       NgayBD: ['', Validators.required],
       NgayKT: ['', Validators.required],
-      CBThucHien: [, Validators.required],
+      NoiDungTimKiem: [''],
     });
-    this.xulyvanbanService.getDocuments().subscribe({
-      next: (data) => {
-        //this.dulieuxuly = data;
-        console.log(data);
-        this.vanbanden = data[0];
-        this.dangthuchien = data[3];
-        this.filetiendothuchien = data[4];
-        this.dathuchien = data[7];
-        this.ykienchidao = data[5];
-        this.canbothuchien = data[12];
-        this.tmpCBTH = data[12];
-        this.nguoithuchienvb = data[6];
-        this.dataSource = new MatTableDataSource<IncomingOfficialDispatch>(data[0]);
-        this.dataSource.paginator = this.paginator;
-        this.isLoadingResults = false;
-      },
-      error: (error) => {
-        //window.location.reload();
-        this.xulyvanbanService.showToasterError('','Lỗi dữ liệu!');
-      },
-      complete: () => {}
-    });
+    // this.xulyvanbanService.getDocuments().subscribe({
+    //   next: (data) => {
+    //     //this.dulieuxuly = data;
+    //     //console.log(data);
+    //     this.vanbanden = data[0];
+    //     this.dangthuchien = data[3];
+    //     this.filetiendothuchien = data[4];
+    //     this.dathuchien = data[7];
+    //     this.ykienchidao = data[5];
+    //     this.canbothuchien = data[12];
+    //     this.tmpCBTH = data[12];
+    //     this.nguoithuchienvb = data[6];
+    //     this.dataSource = new MatTableDataSource<IncomingOfficialDispatch>(data[0]);
+    //     this.dataSource.paginator = this.paginator;
+    //     this.isLoadingResults = false;
+    //   },
+    //   error: (error) => {
+    //     //window.location.reload();
+    //     this.xulyvanbanService.showToasterError('','Lỗi dữ liệu!');
+    //   },
+    //   complete: () => {}
+    // });
 
     this.timkiemCBTH.valueChanges
       .pipe(takeUntil(this._onDestroy))
@@ -192,8 +197,6 @@ export class TraCuuVanBanComponent implements OnInit {
     });
 
     const dialogRef = this.dialog.open(CapNhatTienDoThucHienComponent,{
-      // backdropClass: 'cdk-overlay-transparent-backdrop',
-      // hasBackdrop: true,
       width: '70vw',
       maxWidth: '90vw',
       maxHeight: '95vh',
@@ -210,8 +213,6 @@ export class TraCuuVanBanComponent implements OnInit {
     dulieuchon.push(row);
 
     const dialogRef = this.dialog.open(XacNhanXoaTienDoThucHienComponent,{
-      // backdropClass: 'cdk-overlay-transparent-backdrop',
-      // hasBackdrop: true,
       width: '70vw',
       maxWidth: '90vw',
       maxHeight: '95vh',
@@ -228,8 +229,6 @@ export class TraCuuVanBanComponent implements OnInit {
     dulieuchon.push(row);
 
     const dialogRef = this.dialog.open(ThemDaThucHienComponent,{
-      // backdropClass: 'cdk-overlay-transparent-backdrop',
-      // hasBackdrop: true,
       width: '70vw',
       maxWidth: '90vw',
       maxHeight: '95vh',
@@ -276,28 +275,26 @@ export class TraCuuVanBanComponent implements OnInit {
   statusChange(event){
     this.statusSelected = event.value;
     if(this.statusSelected == '1'){
-      this.thongkeVB.get('NgayBD').setValue(null);
-      this.thongkeVB.get('NgayKT').setValue(null);
-      this.thongkeVB.get('CBThucHien').setValue(null);
+      this.timkiemVB.get('NgayBD').setValue(null);
+      this.timkiemVB.get('NgayKT').setValue(null);
+    }
+    else
+    {
+      this.timkiemVB.get('NoiDungTimKiem').setValue(null);
     }
   }
 
-  thongkeYKCD(){
-    var CBThucHien = [];
-
-    if((this.thongkeVB.get('CBThucHien').value) != null){
-      CBThucHien = this.thongkeVB.get('CBThucHien').value;
-    }
-
+  timkiemYKCD(){
     var formData: any = new FormData();
     formData.append("trangthai", this.statusSelected);
-    formData.append("NgayBD", this.thongkeVB.get('NgayBD').value);
-    formData.append("NgayKT", this.thongkeVB.get('NgayKT').value);
-    formData.append("CBThucHien", JSON.stringify(CBThucHien));
+    formData.append("SoVB", this.timkiemVB.get('NoiDungTimKiem').value);
+    formData.append("NgayBD", this.timkiemVB.get('NgayBD').value);
+    formData.append("NgayKT", this.timkiemVB.get('NgayKT').value);
     formData.append('_method', 'POST');
     this.isLoadingResults = true;
-    this.thongkeService.getStatistical(formData).subscribe({
+    this.tracuuService.getDataSearch(formData).subscribe({
       next: (data) => {
+        //console.log(data);
         this.vanbanden = data[0];
         this.dangthuchien = data[3];
         this.filetiendothuchien = data[4];
@@ -320,23 +317,34 @@ export class TraCuuVanBanComponent implements OnInit {
   }
 
   public hasError = (controlName: string, errorName: string) =>{
-    return this.thongkeVB.controls[controlName].hasError(errorName);
+    return this.timkiemVB.controls[controlName].hasError(errorName);
   }
 
-  themYKCD(row){
-    const dulieuchon: any[] = [];
-    dulieuchon.push(row);
-
-    const dialogRef = this.dialog.open(ThemYKienChiDaoTKComponent,{
-      width: '90vw',
-      maxWidth: '90vw',
-      maxHeight: '95vh',
-      data: {dulieuchon},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.ngOnInit();
-    });
+  showLightbox(index, imgURL) {
+    this.imageObject = [{ image: imgURL}];
+    this.currentIndex = index;
+    this.showFlag = true;
   }
+
+  closeEventHandler() {
+    this.showFlag = false;
+    this.currentIndex = -1;
+  }
+
+  // themYKCD(row){
+  //   const dulieuchon: any[] = [];
+  //   dulieuchon.push(row);
+
+  //   const dialogRef = this.dialog.open(ThemYKienChiDaoTKComponent,{
+  //     width: '90vw',
+  //     maxWidth: '90vw',
+  //     maxHeight: '95vh',
+  //     data: {dulieuchon},
+  //   });
+
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     this.ngOnInit();
+  //   });
+  // }
 
 }

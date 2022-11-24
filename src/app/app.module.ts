@@ -41,6 +41,7 @@ import { CapNhatDaThucHienComponent } from './cap-nhat-da-thuc-hien/cap-nhat-da-
 import { XoaDaThucHienComponent } from './xoa-da-thuc-hien/xoa-da-thuc-hien.component';
 import {MatRadioModule} from '@angular/material/radio';
 import { ThemYKienChiDaoTKComponent } from './them-ykien-chi-dao-tk/them-ykien-chi-dao-tk.component';
+import { NgImageFullscreenViewModule } from 'ng-image-fullscreen-view';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import { ThemYKienChiDaoTKComponent } from './them-ykien-chi-dao-tk/them-ykien-c
     NgxMatSelectSearchModule,
     MaterialFileInputModule,
     MatRadioModule,
+    NgImageFullscreenViewModule,
   ],
   providers: [XuLyVanBanService, AuthService],
   bootstrap: [AppComponent]

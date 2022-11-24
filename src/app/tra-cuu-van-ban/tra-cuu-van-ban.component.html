@@ -1,10 +1,17 @@
 <mat-radio-group aria-label="Trạng thái">
-  <span class="fw-bold"><mat-radio-button (change)="statusChange($event)" value="1" checked>Chưa hoàn thành</mat-radio-button></span>
+  <span class="fw-bold"><mat-radio-button (change)="statusChange($event)" value="1" checked>Tìm kiếm tất cả</mat-radio-button></span>
   <span class="mx-2 fw-bold"><mat-radio-button (change)="statusChange($event)" value="3">Đã hoàn thành</mat-radio-button></span>
 </mat-radio-group>
-<form [formGroup]="thongkeVB" (ngSubmit)="thongkeYKCD()" class="mt-2">
+<form [formGroup]="timkiemVB" (ngSubmit)="timkiemYKCD()" class="mt-2">
     <table>
       <tr>
+        <td *ngIf="statusSelected == '1'">
+          <mat-form-field appearance="outline">
+            <mat-label>Nội dung tìm kiếm</mat-label>
+            <input matInput type="text" placeholder="Nội dung tìm kiếm..." formControlName="NoiDungTimKiem">
+            <!-- <mat-error *ngIf="hasError('NoiDungTimKiem', 'required')">Nội dung tìm kiếm bắt buộc (*)</mat-error> -->
+          </mat-form-field>
+        </td>
         <td *ngIf="statusSelected == '3'">
           <mat-form-field appearance="outline">
             <mat-label>Ngày bắt đầu</mat-label>
@@ -19,34 +26,13 @@
             <mat-error *ngIf="hasError('NgayKT', 'required')">Thời gian hết hạn bắt buộc (*)</mat-error>
           </mat-form-field>
         </td>
-        <td *ngIf="statusSelected == '3'">
-          <mat-form-field appearance="outline">
-            <mat-label>Cán bộ thực hiện</mat-label>
-            <mat-select formControlName="CBThucHien" placeholder="Cán bộ thực hiện" required>
-              <mat-option>
-                <ngx-mat-select-search [formControl]="timkiemCBTH"
-                  [placeholderLabel]="'Tìm kiếm'"
-                  [noEntriesFoundLabel]="'Không có dữ liệu tìm kiếm'"
-                >
-                </ngx-mat-select-search>
-              </mat-option>
-              <mat-option [value]="00000">
-                Tất cả cán bộ
-              </mat-option>
-              <mat-option *ngFor="let th of canbothuchien" [value]="th.id">
-                {{th.FullName}}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="hasError('CBThucHien', 'required')">Cán bộ thực hiện bắt buộc (*)</mat-error>
-          </mat-form-field>
-        </td>
         <td>
           <span *ngIf="statusSelected == '3'; then thenBlock else elseBlock"></span>
           <ng-template #thenBlock>
-            <button mat-button class="btn btn-sm btn-outline-primary fw-bold mx-2 mb-3" [disabled]="!thongkeVB.valid">Thống kê</button>
+            <button mat-button class="btn btn-sm btn-outline-primary fw-bold mx-2 mb-3" [disabled]="!timkiemVB.valid">Tìm kiếm</button>
           </ng-template>
           <ng-template #elseBlock>
-            <button mat-button class="btn btn-sm btn-outline-primary fw-bold mx-2 mb-3">Thống kê</button>
+            <button mat-button class="btn btn-sm btn-outline-primary fw-bold mx-2 mb-3">Tìm kiếm</button>
           </ng-template>
         </td>
       </tr>
@@ -166,9 +152,9 @@
     <ng-container matColumnDef="YKienChiDao">
       <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef>Ý kiến chỉ đạo</th>
       <td mat-cell [ngClass]="['contentTextExcerpt', 'tableContent']" *matCellDef="let element">
-        <button type="button" class="btn btn-sm text-success mb-2" (click)="themYKCD(element)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Thêm ý kiến chỉ đạo</button>
+        <!-- <button type="button" class="btn btn-sm text-success mb-2" (click)="themYKCD(element)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Thêm ý kiến chỉ đạo</button> -->
         <p *ngIf="element.summary != null">
-          <img width="250px" src="{{urlChitietHinhanhTT}}{{element.summary}}" alt="summary" />
+          <img width="250px" src="{{urlChitietHinhanhTT}}{{element.summary}}" (click)="showLightbox(i,urlChitietHinhanhTT+element.summary)" alt="summary" />
         </p>
         <ul *ngFor="let ykcd of ykienchidao">
           <li *ngIf="element.DocumentID == ykcd.IncomingOfficialDispatchID">
@@ -199,3 +185,9 @@
                  showFirstLastButtons>
   </mat-paginator>
 </div>
+
+<ng-image-fullscreen-view
+        [images]="imageObject"
+        [imageIndex]="currentIndex"
+        [show]="showFlag"
+        (close)="closeEventHandler()"></ng-image-fullscreen-view>

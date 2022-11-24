@@ -176,7 +176,6 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
     const dulieuchon: any[] = [];
     var dscbth = [];
     var dscbph = [];
-    var dsykcd = [];
     dulieuchon.push(row);
 
     this.themykienchidaoService.getImplementationOfficerList(row.DocumentID).subscribe({
@@ -192,25 +191,15 @@ export class ThemYKienChiDaoComponent implements OnInit, AfterViewInit{
           dscbph.push(response[1][i].CoordinationOfficerID);
         }
 
-        dsykcd = response[2];
         const dialogRef = this.dialog.open(ThemYKienChiDaoDialogComponent,{
           width: '90vw',
           maxWidth: '90vw',
           maxHeight: '95vh',
-          data: {dulieuchon, cbth, cbph, dscbth, dscbph, dsykcd},
+          data: {dulieuchon, cbth, cbph, dscbth, dscbph},
         });
 
         dialogRef.afterClosed().subscribe(result => {
           this.ngOnInit();
-
-          if(result !== undefined){
-            if(result.result == 'reloadData')
-            {
-              this.chonYKCD(row);
-            }
-          }
-
-          //console.log(`Dialog result: ${result}`);
         });
       },
       error: (error) => {

@@ -58,6 +58,9 @@ export class XuLyVanBanComponent implements OnInit {
   displayedColumns: string[] = ['select', 'VanBanDen', 'DangThucHien', 'DaThucHien','TrangThai','YKienChiDao'];
   urlChitietHinhanhTT = this.authService.apiURL+'/storage/';
   nguoithuchienvb: any[] = [];
+  currentIndex: any = -1;
+  showFlag: any = false;
+  imageObject: Array<object> = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngAfterViewInit(): void {
@@ -232,5 +235,16 @@ export class XuLyVanBanComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       this.ngOnInit();
     });
+  }
+
+  showLightbox(index, imgURL) {
+    this.imageObject = [{ image: imgURL}];
+    this.currentIndex = index;
+    this.showFlag = true;
+  }
+
+  closeEventHandler() {
+    this.showFlag = false;
+    this.currentIndex = -1;
   }
 }

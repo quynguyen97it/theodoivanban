@@ -42,9 +42,27 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
   TTYKCD = this.data['dsykcd'];
   statusYKCD = {};
   showYKCD = {};
+  currentIndex: any = -1;
+  showFlag: any = false;
+  imageObject: Array<object> = [];
 
   @ViewChild('multiSelect') multiSelect: MatSelect;
   ngOnInit(): void {
+    this.themykienchidaoService.getImplementationOfficerList(this.data['dulieuchon'][0].DocumentID).subscribe({
+      next: (response) => {
+        this.TTYKCD = response[2];
+        this.TTYKCD.forEach(e => {
+          this.statusYKCD[e.SId] = true;
+          this.showYKCD[e.SId] = true;
+        });
+
+      },
+      error: (error) => {
+        console.log('Lỗi dữ liệu!');
+      },
+      complete: () => {}
+    });
+
     this.duyetYKCD = this.fb.group({
       SoKyHieuVanBan: ['', Validators.required],
       eNgayVBDen: ['', Validators.required],
@@ -60,10 +78,6 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
 
     this.capnhatChidao = this.fb.group({
       eYKCD: ['', Validators.required],
-    });
-    this.TTYKCD.forEach(e => {
-      this.statusYKCD[e.SId] = true;
-      this.showYKCD[e.SId] = true;
     });
 
     this.duyetYKCD.get('CBThucHien').setValue(this.data['dscbth']);
@@ -248,7 +262,7 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
           this.statusYKCD[e.SId] = true;
           this.showYKCD[e.SId] = true;
         });
-        this.dialogRef.close({ result: 'reloadData' });
+        this.ngOnInit();
       }
     });
   }
@@ -265,7 +279,7 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
         this.themykienchidaoService.showToasterError('','Lỗi dữ liệu!');
       },
       complete: () => {
-        this.showYKCD[tt.SId] = false;
+        this.ngOnInit();
       }
     });
   }
@@ -307,6 +321,17 @@ export class ThemYKienChiDaoDialogComponent implements OnInit, AfterViewInit, On
     var dateData0 = dateData;
     var dateData1 = dateData0.split("/");
     return dateData1[2]+"-"+dateData1[1]+"-"+dateData1[0];
+  }
+
+  showLightbox(index, imgURL) {
+    this.imageObject = [{ image: imgURL}];
+    this.currentIndex = index;
+    this.showFlag = true;
+  }
+
+  closeEventHandler() {
+    this.showFlag = false;
+    this.currentIndex = -1;
   }
 
 }

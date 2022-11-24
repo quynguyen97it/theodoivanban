@@ -50,6 +50,7 @@ export class ThongKeComponent implements OnInit {
 
   VanBanChiDao: IncomingOfficialDispatch[] = [];
   dataSource = new MatTableDataSource<IncomingOfficialDispatch>(this.VanBanChiDao);
+  dataSource2 = new MatTableDataSource<IncomingOfficialDispatch>(this.VanBanChiDao);
   dangthuchien: any[] = [];
   dathuchien: any[] = [];
   ykienchidao: any[] = [];
@@ -59,6 +60,7 @@ export class ThongKeComponent implements OnInit {
   urlFile = this.authService.apiURL+'/generate-pdf/';
   selection = new SelectionModel<IncomingOfficialDispatch>(true, []);
   displayedColumns: string[] = ['select', 'VanBanDen', 'DangThucHien', 'DaThucHien','TrangThai','YKienChiDao'];
+  displayedColumns2: string[] = ['TenCBThuLy', 'SLVBTre'];
   urlChitietHinhanhTT = this.authService.apiURL+'/storage/';
   statusSelected = '1';
   thongkeVB: FormGroup;
@@ -67,6 +69,9 @@ export class ThongKeComponent implements OnInit {
   public timkiemCBTH: FormControl = new FormControl();
   protected _onDestroy = new Subject<void>();
   protected tmpCBTH: any[] = [];
+  currentIndex: any = -1;
+  showFlag: any = false;
+  imageObject: Array<object> = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngAfterViewInit(): void {
@@ -275,11 +280,11 @@ export class ThongKeComponent implements OnInit {
 
   statusChange(event){
     this.statusSelected = event.value;
-    if(this.statusSelected == '1'){
-      this.thongkeVB.get('NgayBD').setValue(null);
-      this.thongkeVB.get('NgayKT').setValue(null);
-      this.thongkeVB.get('CBThucHien').setValue(null);
-    }
+    this.thongkeVB.get('NgayBD').setValue(null);
+    this.thongkeVB.get('NgayKT').setValue(null);
+    this.thongkeVB.get('CBThucHien').setValue(null);
+    this.dataSource2 = new MatTableDataSource<IncomingOfficialDispatch>([]);
+    this.dataSource2.paginator = this.paginator;
   }
 
   thongkeYKCD(){
@@ -308,7 +313,10 @@ export class ThongKeComponent implements OnInit {
         this.nguoithuchienvb = data[6];
         this.dataSource = new MatTableDataSource<IncomingOfficialDispatch>(data[0]);
         this.dataSource.paginator = this.paginator;
+        this.dataSource2 = new MatTableDataSource<IncomingOfficialDispatch>(data[13]);
+        this.dataSource2.paginator = this.paginator;
         this.isLoadingResults = false;
+        console.log(data);
       },
       error: (error) => {
         this.thongkeService.showToasterError('','Lỗi dữ liệu!');
@@ -337,5 +345,16 @@ export class ThongKeComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       this.ngOnInit();
     });
+  }
+
+  showLightbox(index, imgURL) {
+    this.imageObject = [{ image: imgURL}];
+    this.currentIndex = index;
+    this.showFlag = true;
+  }
+
+  closeEventHandler() {
+    this.showFlag = false;
+    this.currentIndex = -1;
   }
 }
