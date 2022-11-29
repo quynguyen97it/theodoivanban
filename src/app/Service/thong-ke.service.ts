@@ -37,6 +37,13 @@ export class ThongKeService {
     )
   }
 
+  getStatisticalDetail(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/chitietthongke', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
+
   createDirective(formData): Observable<any[]> {
     return this.httpClient.post<any[]>(this.authService.apiURL+'/api/themchidao', formData, this.authService.httpOptions)
     .pipe(
@@ -44,12 +51,12 @@ export class ThongKeService {
     )
   }
 
-  // getImplementationOfficerList(DocumentID): Observable<any[]> {
-  //   return this.httpClient.post<any[]>(this.authService.apiURL+'/api/dscanbothuchien', {DocumentID: DocumentID}, this.authService.httpOptions)
-  //   .pipe(
-  //     catchError(this.errorHandler)
-  //   )
-  // }
+  getDataSearch(formData): Observable<any[]> {
+    return this.httpClient.post<any[]>(this.authService.apiURL+'/api/tracuuthongke', formData, this.authService.httpOptions)
+    .pipe(
+      catchError(this.errorHandler)
+    )
+  }
 
   showToasterSuccess(message, title){
     this.notifyService.showSuccess(message, title);

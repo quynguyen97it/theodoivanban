@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
       },
       error: (error) => {
-        console.log('Sai tên đăng nhập hoặc mật khẩu!');
+        this.authService.showToasterError('','Sai tên đăng nhập hoặc mật khẩu!');
       },
       complete: () => {
         this.authService.ngOnInit();

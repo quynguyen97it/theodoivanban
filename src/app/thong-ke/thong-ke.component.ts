@@ -72,6 +72,7 @@ export class ThongKeComponent implements OnInit {
   currentIndex: any = -1;
   showFlag: any = false;
   imageObject: Array<object> = [];
+  timkiemVB: FormGroup;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngAfterViewInit(): void {
@@ -94,6 +95,11 @@ export class ThongKeComponent implements OnInit {
       NgayKT: ['', Validators.required],
       CBThucHien: [, Validators.required],
     });
+
+    this.timkiemVB = this.fb.group({
+      NoiDungTimKiem: ['', Validators.required],
+    });
+
     this.xulyvanbanService.getDocuments().subscribe({
       next: (data) => {
         //this.dulieuxuly = data;
@@ -316,7 +322,6 @@ export class ThongKeComponent implements OnInit {
         this.dataSource2 = new MatTableDataSource<IncomingOfficialDispatch>(data[13]);
         this.dataSource2.paginator = this.paginator;
         this.isLoadingResults = false;
-        console.log(data);
       },
       error: (error) => {
         this.thongkeService.showToasterError('','Lỗi dữ liệu!');
@@ -325,10 +330,6 @@ export class ThongKeComponent implements OnInit {
 
       }
     });
-  }
-
-  public hasError = (controlName: string, errorName: string) =>{
-    return this.thongkeVB.controls[controlName].hasError(errorName);
   }
 
   themYKCD(row){
@@ -356,5 +357,76 @@ export class ThongKeComponent implements OnInit {
   closeEventHandler() {
     this.showFlag = false;
     this.currentIndex = -1;
+  }
+
+  timkiemYKCD(){
+    var formData: any = new FormData();
+    formData.append("SoVB", this.timkiemVB.get('NoiDungTimKiem').value);
+    formData.append('_method', 'POST');
+    this.isLoadingResults = true;
+    this.thongkeService.getDataSearch(formData).subscribe({
+      next: (data) => {
+        //console.log(data);
+        this.vanbanden = data[0];
+        this.dangthuchien = data[3];
+        this.filetiendothuchien = data[4];
+        this.dathuchien = data[7];
+        this.ykienchidao = data[5];
+        this.canbothuchien = data[12];
+        this.tmpCBTH = data[12];
+        this.nguoithuchienvb = data[6];
+        this.dataSource = new MatTableDataSource<IncomingOfficialDispatch>(data[0]);
+        this.dataSource.paginator = this.paginator;
+        this.isLoadingResults = false;
+      },
+      error: (error) => {
+        this.thongkeService.showToasterError('','Lỗi dữ liệu!');
+      },
+      complete: () => {
+
+      }
+    });
+  }
+
+  public dsChitietVB(row){
+
+    var formData: any = new FormData();
+    formData.append("trangthai", this.statusSelected);
+    formData.append("NgayBD", this.thongkeVB.get('NgayBD').value);
+    formData.append("NgayKT", this.thongkeVB.get('NgayKT').value);
+    formData.append("CBThucHien", row.id);
+    formData.append('_method', 'POST');
+    this.isLoadingResults = true;
+    this.thongkeService.getStatisticalDetail(formData).subscribe({
+      next: (data) => {
+        this.vanbanden = data[0];
+        this.dangthuchien = data[3];
+        this.filetiendothuchien = data[4];
+        this.dathuchien = data[7];
+        this.ykienchidao = data[5];
+        this.canbothuchien = data[12];
+        this.tmpCBTH = data[12];
+        this.nguoithuchienvb = data[6];
+        this.dataSource = new MatTableDataSource<IncomingOfficialDispatch>(data[0]);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource2 = new MatTableDataSource<IncomingOfficialDispatch>(data[13]);
+        this.dataSource2.paginator = this.paginator;
+        this.isLoadingResults = false;
+      },
+      error: (error) => {
+        this.thongkeService.showToasterError('','Lỗi dữ liệu!');
+      },
+      complete: () => {
+
+      }
+    });
+  }
+
+  public hasError = (controlName: string, errorName: string) =>{
+    return this.thongkeVB.controls[controlName].hasError(errorName);
+  }
+
+  public hasError2 = (controlName: string, errorName: string) =>{
+    return this.timkiemVB.controls[controlName].hasError(errorName);
   }
 }

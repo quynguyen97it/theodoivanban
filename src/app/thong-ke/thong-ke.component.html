@@ -1,3 +1,20 @@
+<form [formGroup]="timkiemVB" (ngSubmit)="timkiemYKCD()" class="mt-2">
+  <table>
+    <tr>
+      <td>
+        <mat-form-field appearance="outline">
+          <mat-label>Nội dung tìm kiếm</mat-label>
+          <input matInput type="text" placeholder="Nội dung tìm kiếm..." formControlName="NoiDungTimKiem">
+          <mat-error *ngIf="hasError2('NoiDungTimKiem', 'required')">Nội dung tìm kiếm bắt buộc (*)</mat-error>
+        </mat-form-field>
+      </td>
+      <td>
+        <button mat-button class="btn btn-sm btn-outline-primary fw-bold mx-2 mb-3" [disabled]="!timkiemVB.valid">Tìm kiếm</button>
+      </td>
+    </tr>
+  </table>
+</form>
+
 <mat-radio-group aria-label="Trạng thái">
   <span class="fw-bold"><mat-radio-button (change)="statusChange($event)" value="1" checked>Chưa hoàn thành</mat-radio-button></span>
   <span class="mx-2 fw-bold"><mat-radio-button (change)="statusChange($event)" value="3">Đã hoàn thành</mat-radio-button></span>
@@ -57,7 +74,7 @@
 <table *ngIf="statusSelected == '4'" style="width: 100%; text-align: center;" mat-table [dataSource]="dataSource2" multiTemplateDataRows class="mat-elevation-z8">
   <ng-container matColumnDef="TenCBThuLy">
     <th [ngClass]="['tableTitle']" mat-header-cell *matHeaderCellDef> Cán bộ thụ lý </th>
-    <td mat-cell *matCellDef="let element"> {{element.FullName}} </td>
+    <td mat-cell *matCellDef="let element" (click)="dsChitietVB(element)"> {{element.FullName}} </td>
   </ng-container>
 
   <ng-container matColumnDef="SLVBTre">

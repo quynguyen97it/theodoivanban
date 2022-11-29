@@ -5,13 +5,14 @@ import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Users } from '../models/users';
+import { NotificationService } from '../Service/notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   auth_token = this.getAuthorizationToken();
-  apiURL = 'http://localhost:8001';
+  apiURL = 'http://115.74.201.249:8001';
   errorData: {};
   public redirectUrl: string;
   currentIndex: any = -1;
@@ -26,7 +27,8 @@ export class AuthService {
     })
   }
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router,
+    private notifyService : NotificationService,) { }
 
   ngOnInit(): void {
     this.roleAs = this.getRole();
@@ -111,6 +113,22 @@ export class AuthService {
     this.imageObject = [{ image: imgURL}];
     this.currentIndex = index;
     this.showFlag = true;
+  }
+
+  showToasterSuccess(message, title){
+    this.notifyService.showSuccess(message, title);
+  }
+
+  showToasterError(message, title){
+      this.notifyService.showError(message, title);
+  }
+
+  showToasterInfo(message, title){
+      this.notifyService.showInfo(message, title);
+  }
+
+  showToasterWarning(message, title){
+      this.notifyService.showWarning(message, title);
   }
 
   closeEventHandler() {

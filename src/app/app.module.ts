@@ -8,7 +8,6 @@ import { ThemYKienChiDaoComponent } from './them-ykien-chi-dao/them-ykien-chi-da
 import { XuLyVanBanComponent } from './xu-ly-van-ban/xu-ly-van-ban.component';
 import { TraCuuVanBanComponent } from './tra-cuu-van-ban/tra-cuu-van-ban.component';
 import { ThongKeComponent } from './thong-ke/thong-ke.component';
-import { VanBanHoanThanhComponent } from './van-ban-hoan-thanh/van-ban-hoan-thanh.component';
 import { XuLyVanBanService } from './Service/xu-ly-van-ban.service';
 import { LoginComponent } from './auth/login/login.component';
 import { AuthService } from './auth/auth.service';
@@ -50,7 +49,6 @@ import { NgImageFullscreenViewModule } from 'ng-image-fullscreen-view';
     XuLyVanBanComponent,
     TraCuuVanBanComponent,
     ThongKeComponent,
-    VanBanHoanThanhComponent,
     LoginComponent,
     NotFoundComponent,
     ThemYKienChiDaoDialogComponent,
