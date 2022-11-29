@@ -10,12 +10,26 @@ import { AuthGuard } from './auth/auth.guard';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [
-  {path: '', component: XuLyVanBanComponent, canActivate: [AuthGuard]},
-  {path: 'xulyvanban', component: XuLyVanBanComponent, canActivate: [AuthGuard]},
-  {path: 'themykienchidao', component: ThemYKienChiDaoComponent, canActivate: [AuthGuard]},
-  {path: 'tracuuvanban', component: TraCuuVanBanComponent, canActivate: [AuthGuard]},
-  {path: 'thongke', component: ThongKeComponent, canActivate: [AuthGuard]},
-  {path: 'vanbanhoanthanh', component: VanBanHoanThanhComponent, canActivate: [AuthGuard]},
+  {path: '', component: XuLyVanBanComponent, canActivate: [AuthGuard],
+    data: [
+      [4]
+  ]},
+  {path: 'xulyvanban', component: XuLyVanBanComponent, canActivate: [AuthGuard],
+    data: [
+      [4]
+  ]},
+  {path: 'themykienchidao', component: ThemYKienChiDaoComponent, canActivate: [AuthGuard],
+    data: [
+      [3]
+  ]},
+  {path: 'tracuuvanban', component: TraCuuVanBanComponent, canActivate: [AuthGuard],
+    data: [
+      [4]
+  ]},
+  {path: 'thongke', component: ThongKeComponent, canActivate: [AuthGuard],
+    data: [
+      [0,1,2,3]
+  ]},
   {path: 'login', component: LoginComponent},
   {path: '**', component: NotFoundComponent},
 ];

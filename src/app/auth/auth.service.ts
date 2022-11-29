@@ -17,6 +17,7 @@ export class AuthService {
   currentIndex: any = -1;
   showFlag: any = false;
   imageObject: Array<object> = [];
+  roleAs: string;
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -28,6 +29,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit(): void {
+    this.roleAs = this.getRole();
     this.auth_token = this.getAuthorizationToken();
     this.httpOptions = {
       headers: new HttpHeaders({
@@ -42,6 +44,7 @@ export class AuthService {
     .pipe(
       map(res => {
         if (res.token) {
+          this.roleAs = res.role;
           localStorage.setItem('currentUser', JSON.stringify(res));
           if (this.redirectUrl) {
             this.router.navigate([this.redirectUrl]);
@@ -91,6 +94,17 @@ export class AuthService {
         throw 'error in source. Details: ' + err;
       })
     )
+  }
+
+  getRole() {
+    if (localStorage.getItem('currentUser')) {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      this.roleAs = currentUser.role;
+      return this.roleAs;
+    }
+    else{
+      this.router.navigate(['/login']);
+    }
   }
 
   showLightbox(index, imgURL) {
